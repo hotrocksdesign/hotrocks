@@ -1,0 +1,28 @@
+# Overlay de producción: agrega nginx como proxy reverso con HTTPS.
+# Uso: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# No pisa nada del docker-compose.yml base (el que usás en local) — solo
+# suma el servicio de nginx y políticas de reinicio automático.
+
+services:
+  laravel:
+    restart: unless-stopped
+
+  mysql:
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: hotrocks-nginx
+    restart: unless-stopped
+    depends_on:
+      - laravel
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/active.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/certbot/webroot:/var/www/certbot:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - hotrocks-network

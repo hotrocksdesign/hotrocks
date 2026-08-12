@@ -1,0 +1,94 @@
+@extends('admin.base')
+
+@section('admin-content')
+<h3 style="font-family:'Inter',sans-serif; font-weight:800; font-size:1.3rem; margin: 30px 0 24px;">Editar Reseña</h3>
+
+<form method="POST" action="{{ route('admin.reviews.update', $review) }}" enctype="multipart/form-data" class="card" style="max-width: 760px; padding: 32px;">
+    @csrf
+    @method('PUT')
+
+    <div class="field">
+        <label for="title">Título</label>
+        <input type="text" id="title" name="title" required value="{{ $review->title }}">
+        @error('title') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label for="band_id">Banda <span style="color:var(--ink-faint); font-weight:400;">(opcional)</span></label>
+        <select id="band_id" name="band_id">
+            <option value="" {{ !$review->band_id ? 'selected' : '' }}>Sin banda / lineup variado</option>
+            @foreach($bands as $band)
+                <option value="{{ $band->id }}" {{ $review->band_id == $band->id ? 'selected' : '' }}>{{ $band->name }}</option>
+            @endforeach
+        </select>
+        @error('band_id') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label for="venue">Venue/Lugar</label>
+        <input type="text" id="venue" name="venue" required value="{{ $review->venue }}">
+        @error('venue') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label for="show_date">Fecha del Show</label>
+        <input type="datetime-local" id="show_date" name="show_date" required value="{{ $review->show_date->format('Y-m-d\TH:i') }}">
+        @error('show_date') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label for="content">Contenido de la Reseña</label>
+        <textarea id="content" name="content" required rows="10">{{ $review->content }}</textarea>
+        @error('content') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label for="video_url">URL de Video (YouTube o Reel/Post de Instagram)</label>
+        <input type="url" id="video_url" name="video_url" value="{{ $review->video_url }}" placeholder="https://www.youtube.com/watch?v=... o https://www.instagram.com/reel/...">
+        @error('video_url') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label for="featured_image">Imagen del show</label>
+        @if($review->featured_image)
+            <img src="{{ asset('storage/' . $review->featured_image) }}" alt="" class="current-image">
+        @endif
+        <input type="file" id="featured_image" name="featured_image" accept="image/*">
+        <p class="field-hint">Dejalo vacío para mantener la imagen actual.</p>
+        @error('featured_image') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
+        <label>Galería de fotos</label>
+        @if($review->photos->count())
+            <div class="gallery-manage">
+                @foreach($review->photos as $photo)
+                    <div class="gallery-manage-item">
+                        <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="">
+                        <form method="POST" action="{{ route('admin.reviews.photos.destroy', [$review, $photo]) }}" onsubmit="return confirm('¿Quitar esta foto?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" aria-label="Quitar foto">&times;</button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="field-hint">Todavía no hay fotos en la galería.</p>
+        @endif
+        <label for="photos" style="font-weight:400; font-size:.85rem; color:var(--ink-soft);">Agregar más fotos</label>
+        <input type="file" id="photos" name="photos[]" accept="image/*" multiple>
+        @error('photos.*') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field-checkbox">
+        <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ $review->is_featured ? 'checked' : '' }}>
+        <label for="is_featured">Marcar como reseña principal (aparece en el home)</label>
+    </div>
+
+    <div style="display:flex; gap:12px;">
+        <button type="submit" class="btn btn-accent">Guardar Cambios</button>
+        <a href="{{ route('admin.reviews.index') }}" class="btn btn-ghost">Cancelar</a>
+    </div>
+</form>
+@endsection
