@@ -56,6 +56,8 @@
     @if(auth()->user()->isAdmin() || auth()->user()->isEditor())
         <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.index') ? 'active' : '' }}">Mis Reseñas</a>
         <a href="{{ route('admin.reviews.create') }}" class="{{ request()->routeIs('admin.reviews.create') ? 'active' : '' }}">+ Crear Reseña</a>
+        <a href="{{ route('admin.news.index') }}" class="{{ request()->routeIs('admin.news.index') ? 'active' : '' }}">Noticias</a>
+        <a href="{{ route('admin.news.create') }}" class="{{ request()->routeIs('admin.news.create') ? 'active' : '' }}">+ Crear Noticia</a>
         <a href="{{ route('admin.bands.index') }}" class="{{ request()->routeIs('admin.bands.*') ? 'active' : '' }}">Bandas</a>
         <a href="{{ route('admin.bands.create') }}" class="{{ request()->routeIs('admin.bands.create') ? 'active' : '' }}">+ Nueva Banda</a>
     @endif

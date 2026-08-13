@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
-use App\Models\Band;
+use App\Models\News;
 use App\Models\Show;
 use Illuminate\View\View;
 
@@ -27,13 +27,16 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
+        $latestNews = News::where('published_at', '!=', null)
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
         return view('home.index', [
             'featuredReview' => $featuredReview,
             'latestReviews' => $latestReviews,
             'upcomingShows' => $upcomingShows,
-            'reviewsCount' => Review::where('published_at', '!=', null)->count(),
-            'bandsCount' => Band::count(),
-            'showsCount' => Show::where('status', 'approved')->count(),
+            'latestNews' => $latestNews,
         ]);
     }
 }

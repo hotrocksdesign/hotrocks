@@ -6,10 +6,13 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\BandController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\Admin\BandAdminController;
+use App\Http\Controllers\Admin\NewsAdminController;
 use App\Http\Controllers\Admin\ReviewAdminController;
 use App\Http\Controllers\Admin\ShowAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BandProfileController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ShowSubmissionController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -17,6 +20,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Public routes
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 Route::get('/reviews/{review}', [ReviewController::class, 'show'])->name('reviews.show');
+
+Route::get('/noticias', [NewsController::class, 'index'])->name('news.index');
+Route::get('/noticias/{news}', [NewsController::class, 'show'])->name('news.show');
 
 Route::get('/bands', [BandController::class, 'index'])->name('bands.index');
 Route::get('/bands/{band}', [BandController::class, 'show'])->name('bands.show');
@@ -28,6 +34,11 @@ Route::post('/agenda/search', [AgendaController::class, 'search'])->name('agenda
 Route::middleware('auth')->group(function () {
     Route::get('/shows/submit', [ShowSubmissionController::class, 'create'])->name('shows.submit');
     Route::post('/shows/submit', [ShowSubmissionController::class, 'store'])->name('shows.submit.store');
+
+    // Band self-service profile (create/edit own band, goes to pending queue)
+    Route::get('/mi-banda', [BandProfileController::class, 'edit'])->name('band.profile.edit');
+    Route::post('/mi-banda', [BandProfileController::class, 'update'])->name('band.profile.update');
+    Route::delete('/mi-banda/photos/{photo}', [BandProfileController::class, 'destroyPhoto'])->name('band.profile.photos.destroy');
 });
 
 // Admin routes
@@ -35,6 +46,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     // Reviews
     Route::resource('reviews', ReviewAdminController::class)->names('admin.reviews');
     Route::delete('/reviews/{review}/photos/{photo}', [ReviewAdminController::class, 'destroyPhoto'])->name('admin.reviews.photos.destroy');
+
+    // News
+    Route::resource('news', NewsAdminController::class)->names('admin.news');
 
     // Bands
     Route::resource('bands', BandAdminController::class)->names('admin.bands')->except(['show']);

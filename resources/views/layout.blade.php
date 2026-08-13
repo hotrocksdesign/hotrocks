@@ -375,10 +375,14 @@
             <nav class="main-nav" id="mainNav">
                 <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}">Inicio</a>
                 <a href="{{ route('reviews.index') }}" class="{{ request()->routeIs('reviews.*') ? 'is-active' : '' }}">Reseñas</a>
+                <a href="{{ route('news.index') }}" class="{{ request()->routeIs('news.*') ? 'is-active' : '' }}">Noticias</a>
                 <a href="{{ route('bands.index') }}" class="{{ request()->routeIs('bands.*') ? 'is-active' : '' }}">Bandas</a>
                 <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'is-active' : '' }}">Agenda</a>
                 @auth
                     <a href="{{ route('shows.submit') }}" class="{{ request()->routeIs('shows.submit') ? 'is-active' : '' }}">Cargar Show</a>
+                    @if(auth()->user()->isBand())
+                        <a href="{{ route('band.profile.edit') }}" class="{{ request()->routeIs('band.profile.*') ? 'is-active' : '' }}">Mi Banda</a>
+                    @endif
                     @if(auth()->user()->isAdmin() || auth()->user()->isEditor())
                         <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.*') ? 'is-active' : '' }}">Admin</a>
                     @endif
@@ -411,11 +415,12 @@
             <div class="footer-grid">
                 <div>
                     <a href="{{ route('home') }}" class="logo-link">@include('partials.logo')</a>
-                    <p class="footer-blurb">Cobertura independiente de shows en vivo: reseñas, agenda y las bandas que están moviendo la escena.</p>
+                    <p class="footer-blurb">Cobertura independiente de los mejores shows en vivo: Reseñas, agenda y las bandas que están moviendo la escena.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Explorar</h4>
                     <a href="{{ route('reviews.index') }}">Reseñas</a>
+                    <a href="{{ route('news.index') }}">Noticias</a>
                     <a href="{{ route('bands.index') }}">Bandas</a>
                     <a href="{{ route('agenda.index') }}">Agenda</a>
                 </div>
@@ -426,7 +431,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>&copy; {{ date('Y') }} Hot Rocks — Rock Show Coverage</span>
+                <span>&copy; {{ date('Y') }} Hot Rocks Shows</span>
                 <span>Logo y marca sujetos a revisión antes de lanzamiento público</span>
             </div>
         </div>
@@ -464,27 +469,6 @@
                     });
                 }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
                 document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
-
-                var counters = document.querySelectorAll('[data-count-to]');
-                var cio = new IntersectionObserver(function (entries) {
-                    entries.forEach(function (entry) {
-                        if (!entry.isIntersecting) return;
-                        var el = entry.target;
-                        var to = parseInt(el.getAttribute('data-count-to'), 10) || 0;
-                        var start = null;
-                        var duration = 900;
-                        function step(ts) {
-                            if (!start) start = ts;
-                            var progress = Math.min((ts - start) / duration, 1);
-                            el.textContent = Math.floor(progress * to);
-                            if (progress < 1) requestAnimationFrame(step);
-                            else el.textContent = to;
-                        }
-                        requestAnimationFrame(step);
-                        cio.unobserve(el);
-                    });
-                }, { threshold: 0.4 });
-                counters.forEach(function (el) { cio.observe(el); });
             } else {
                 document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
             }
