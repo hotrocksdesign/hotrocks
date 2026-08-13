@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BandAdminController;
 use App\Http\Controllers\Admin\NewsAdminController;
 use App\Http\Controllers\Admin\ReviewAdminController;
 use App\Http\Controllers\Admin\ShowAdminController;
+use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BandProfileController;
@@ -44,14 +45,14 @@ Route::middleware('auth')->group(function () {
 // Admin routes
 Route::middleware('auth')->prefix('admin')->group(function () {
     // Reviews
-    Route::resource('reviews', ReviewAdminController::class)->names('admin.reviews');
+    Route::resource('reviews', ReviewAdminController::class)->names('admin.reviews')->register();
     Route::delete('/reviews/{review}/photos/{photo}', [ReviewAdminController::class, 'destroyPhoto'])->name('admin.reviews.photos.destroy');
 
     // News
-    Route::resource('news', NewsAdminController::class)->names('admin.news');
+    Route::resource('news', NewsAdminController::class)->names('admin.news')->register();
 
     // Bands
-    Route::resource('bands', BandAdminController::class)->names('admin.bands')->except(['show']);
+    Route::resource('bands', BandAdminController::class)->names('admin.bands')->except(['show'])->register();
     Route::delete('/bands/{band}/photos/{photo}', [BandAdminController::class, 'destroyPhoto'])->name('admin.bands.photos.destroy');
 
     // Shows (create directly, auto-approved)
@@ -63,6 +64,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::post('/shows/{show}/approve', [ShowAdminController::class, 'approve'])->name('admin.shows.approve');
     Route::post('/shows/{show}/reject', [ShowAdminController::class, 'reject'])->name('admin.shows.reject');
     Route::delete('/shows/{show}', [ShowAdminController::class, 'destroy'])->name('admin.shows.destroy');
+
+    // Users
+    Route::resource('users', UserAdminController::class)->names('admin.users')->except(['show'])->register();
 });
 
 // Auth routes

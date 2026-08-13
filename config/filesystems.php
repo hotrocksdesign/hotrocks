@@ -40,7 +40,13 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            // En hosting compartido sin SSH no se puede correr `artisan storage:link`
+            // para symlinkear public/storage. PUBLIC_STORAGE_SIBLING=true hace que
+            // los archivos se guarden directo en un `public_html/storage` hermano
+            // de la carpeta de la app (ver deploy/shared-hosting/README.md).
+            'root' => env('PUBLIC_STORAGE_SIBLING')
+                ? dirname(base_path()).'/public_html/storage'
+                : storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,

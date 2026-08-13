@@ -64,6 +64,7 @@
     @if(auth()->user()->isAdmin())
         <a href="{{ route('admin.shows.create') }}" class="{{ request()->routeIs('admin.shows.create') ? 'active' : '' }}">+ Cargar Show</a>
         <a href="{{ route('admin.shows.pending') }}" class="{{ request()->routeIs('admin.shows.pending') ? 'active' : '' }}">Aprobar Shows</a>
+        <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">Usuarios</a>
     @endif
 </div>
 
