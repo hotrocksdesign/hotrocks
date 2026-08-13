@@ -131,7 +131,9 @@ sudo netfilter-persistent save
 
 ### 2. Apuntar tu dominio
 
-En tu proveedor de DNS, creá un registro **A** apuntando a la IP pública de la VM. Esperá a que propague (podés chequear con `dig tudominio.com`) antes de pedir el certificado SSL.
+Dominio: **hotrocks.com.ar** (registrado en nic.ar).
+
+En nic.ar, creá un registro **A** apuntando a la IP pública de la VM. Esperá a que propague (podés chequear con `dig hotrocks.com.ar`) antes de pedir el certificado SSL.
 
 ### 3. Instalar Docker y traer el código
 
@@ -144,48 +146,37 @@ sudo sh get-docker.sh
 sudo usermod -aG docker $USER
 newgrp docker
 
-# Clonar el repo (privado en GitHub — necesitás una key con acceso o un token)
-git clone git@github.com:tu-usuario/hotrocks.git
+# Clonar el repo
+git clone git@github.com:hotrocksdesign/hotrocks.git
 cd hotrocks
 ```
 
 ### 4. Configurar `.env` de producción
 
-```bash
-cp .env.example .env
-```
-
-Editá `.env` y ajustá como mínimo:
-
-```
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://tudominio.com
-
-DB_PASSWORD=<una-contraseña-fuerte>
-DB_ROOT_PASSWORD=<otra-contraseña-fuerte>
-```
-
-Generá una `APP_KEY` real:
-```bash
-docker run --rm -v "$(pwd)":/app php:8.4-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
-# pegá el resultado en APP_KEY= dentro de .env
-```
-
-### 5. Preparar la config de nginx con tu dominio
+El repo **no** incluye el `.env` real (tiene secretos, nunca va a git). Se transfiere aparte, directo desde tu Mac al servidor por `scp`:
 
 ```bash
-sed -i "s/tudominio.com/tu-dominio-real.com/g" docker/nginx/http-only.conf docker/nginx/https.conf
+# desde tu Mac, no desde la VM
+scp /Users/nicolas/Desktop/Hotrocks/.env.production.example ubuntu@TU_IP_PUBLICA:~/hotrocks/.env
+```
+
+Ese archivo ya tiene `APP_URL=https://hotrocks.com.ar`, una `APP_KEY` generada y contraseñas de DB fuertes — no hace falta tocar nada más ahí salvo que quieras cambiar algo puntual.
+
+### 5. Activar la config de nginx (fase HTTP)
+
+Las configs de nginx en `docker/nginx/` ya tienen `hotrocks.com.ar` cargado. Solo hay que activar la fase 1 (HTTP, para poder emitir el certificado):
+
+```bash
 cp docker/nginx/http-only.conf docker/nginx/active.conf
 ```
 
-### 6. Levantar todo (fase HTTP, para poder emitir el certificado)
+### 6. Levantar todo
 
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 
-Esto construye la imagen, corre las migraciones automáticamente y deja nginx sirviendo el sitio por HTTP en el puerto 80 (redirigiendo internamente a Laravel). Probá `http://tudominio.com` antes de seguir.
+Esto construye la imagen, corre las migraciones automáticamente y deja nginx sirviendo el sitio por HTTP en el puerto 80 (redirigiendo internamente a Laravel). Probá `http://hotrocks.com.ar` antes de seguir.
 
 ### 7. Obtener el certificado SSL con Certbot
 
@@ -194,7 +185,7 @@ sudo apt update && sudo apt install certbot -y
 
 sudo certbot certonly --webroot \
   -w "$(pwd)/docker/certbot/webroot" \
-  -d tu-dominio-real.com
+  -d hotrocks.com.ar
 ```
 
 ### 8. Activar HTTPS
@@ -204,7 +195,7 @@ cp docker/nginx/https.conf docker/nginx/active.conf
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml restart nginx
 ```
 
-Entrá a `https://tudominio.com` — debería verse el candado.
+Entrá a `https://hotrocks.com.ar` — debería verse el candado.
 
 **Renovación automática** (Certbot ya instala un timer systemd que corre 2 veces por día, solo hace falta que reinicie nginx después de renovar):
 ```bash
@@ -285,7 +276,7 @@ APP_NAME=Hot Rocks
 APP_ENV=production
 APP_KEY=base64:xxxxx
 APP_DEBUG=false
-APP_URL=https://tudominio.com
+APP_URL=https://hotrocks.com.ar
 
 DB_CONNECTION=mysql
 DB_HOST=mysql
