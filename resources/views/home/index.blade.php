@@ -18,6 +18,7 @@
         border: 1px solid var(--line);
         border-radius: var(--radius-lg);
         margin-bottom: 50px;
+        position: relative;
     }
     /* Cap line length for readability even though the column itself now
        stretches to fill the card. */
@@ -43,16 +44,21 @@
         overflow: hidden;
         box-shadow: var(--shadow-lg);
     }
-    /* Nudge down past the "Reseña destacada" kicker line so the image's
-       top lines up with the title, then stretch to fill the rest of the
-       card's height so the bottom lines up with the buttons row. The
-       image fills its box completely (object-fit:cover) so there's no
-       visible white background around it — crops instead of letterboxing. */
+    /* Absolutely positioned (inset to the "visual" grid area, since .hero
+       is position:relative) instead of align-self:stretch + height:100% —
+       a percentage height inside an auto-sized grid row is indeterminate,
+       so a tall image would blow up the row instead of being capped by
+       it. Insets give it a hard, definite height: exactly from just below
+       the "Reseña destacada" kicker down to the bottom of the buttons row,
+       never taller than that span no matter how tall the source image is. */
     .hero-visual:not(.hero-visual-fallback) {
-        margin-top: 32px;
-        align-self: stretch;
+        position: absolute;
+        top: 32px;
+        right: 0;
+        bottom: 0;
+        left: 0;
     }
-    .hero-visual:not(.hero-visual-fallback) img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-visual:not(.hero-visual-fallback) img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
     .hero-visual.hero-visual-fallback {
@@ -130,11 +136,9 @@
            here since visual is its own row now — go back to a plain
            width-driven small image, centered, right after the title. */
         .hero-visual:not(.hero-visual-fallback) {
+            position: static;
             max-width: 260px;
             margin: 0 auto;
-            align-self: auto;
-            display: block;
-            justify-content: normal;
         }
         .hero-visual:not(.hero-visual-fallback) img { width: 100%; height: auto; max-width: none; object-fit: initial; }
         .newspaper-grid { grid-template-columns: 1fr; gap: 8px; }
