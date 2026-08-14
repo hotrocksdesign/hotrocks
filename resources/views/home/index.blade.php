@@ -7,10 +7,13 @@
     .hero {
         display: grid;
         grid-template-columns: 1.15fr .85fr;
-        gap: 40px;
+        grid-template-areas: "intro visual" "details visual";
+        gap: 12px 40px;
         align-items: start;
         padding: 20px 0 40px;
     }
+    .hero-intro { grid-area: intro; }
+    .hero-details { grid-area: details; }
     .hero h1 {
         font-size: clamp(2rem, 4.2vw, 3.2rem);
         text-transform: uppercase;
@@ -24,6 +27,7 @@
        follows the image's own aspect ratio instead of being stretched
        or cropped to match the text column. */
     .hero-visual {
+        grid-area: visual;
         border-radius: var(--radius-lg);
         position: relative;
         overflow: hidden;
@@ -77,9 +81,14 @@
     .empty-note { color: var(--ink-faint); padding: 30px 0; }
 
     @media (max-width: 900px) {
-        .hero { grid-template-columns: 1fr; }
-        .hero-visual { order: -1; }
+        .hero {
+            grid-template-columns: 1fr;
+            grid-template-areas: "intro" "visual" "details";
+        }
         .hero-visual.hero-visual-fallback { height: auto; min-height: 0; aspect-ratio: 16/9; }
+        /* Real uploaded image (not the generic fallback banner): smaller
+           and centered on mobile, sitting right after the title. */
+        .hero-visual:not(.hero-visual-fallback) { max-width: 260px; margin: 0 auto; }
         .newspaper-grid { grid-template-columns: 1fr; gap: 8px; }
         .newspaper-col { padding: 0; }
         .newspaper-col:last-child { border-left: none; border-top: 1px solid var(--line); padding-top: 20px; margin-top: 12px; }
@@ -100,15 +109,9 @@
 @section('content')
 <section class="hero reveal">
     @if($featuredReview)
-        <div>
+        <div class="hero-intro">
             <span class="kicker">Reseña destacada</span>
             <h1>{{ $featuredReview->title }}</h1>
-            <p class="hero-meta">{{ $featuredReview->band?->name ?? 'Lineup variado' }} · {{ $featuredReview->show_date->format('d/m/Y') }} · {{ $featuredReview->venue }}</p>
-            <p class="lead">{{ Str::limit($featuredReview->content, 180) }}</p>
-            <div class="hero-actions">
-                <a href="{{ route('reviews.show', $featuredReview) }}" class="btn btn-accent">Leer reseña completa</a>
-                <a href="{{ route('reviews.index') }}" class="btn btn-outline">Ver todas las reseñas</a>
-            </div>
         </div>
         @if($featuredReview->featured_image)
             <div class="hero-visual">
@@ -117,17 +120,27 @@
         @else
             <div class="hero-visual hero-visual-fallback" role="img" aria-label="{{ $featuredReview->title }}"></div>
         @endif
+        <div class="hero-details">
+            <p class="hero-meta">{{ $featuredReview->band?->name ?? 'Lineup variado' }} · {{ $featuredReview->show_date->format('d/m/Y') }} · {{ $featuredReview->venue }}</p>
+            <p class="lead">{{ Str::limit($featuredReview->content, 180) }}</p>
+            <div class="hero-actions">
+                <a href="{{ route('reviews.show', $featuredReview) }}" class="btn btn-accent">Leer reseña completa</a>
+                <a href="{{ route('reviews.index') }}" class="btn btn-outline">Ver todas las reseñas</a>
+            </div>
+        </div>
     @else
-        <div>
+        <div class="hero-intro">
             <span class="kicker">Cobertura en vivo</span>
             <h1>La escena en <em>primera fila</em></h1>
+        </div>
+        <div class="hero-visual hero-visual-fallback" role="img" aria-label="Hot Rocks Shows"></div>
+        <div class="hero-details">
             <p class="lead">Reseñas honestas, agenda actualizada y las bandas que están rompiéndola en cada show. Sin filtros, sin auspicios.</p>
             <div class="hero-actions">
                 <a href="{{ route('reviews.index') }}" class="btn btn-accent">Ver reseñas</a>
                 <a href="{{ route('agenda.index') }}" class="btn btn-outline">Explorar agenda</a>
             </div>
         </div>
-        <div class="hero-visual hero-visual-fallback" role="img" aria-label="Hot Rocks Shows"></div>
     @endif
 </section>
 
