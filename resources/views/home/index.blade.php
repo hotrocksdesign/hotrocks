@@ -8,7 +8,7 @@
         display: grid;
         grid-template-columns: 1.15fr .85fr;
         gap: 40px;
-        align-items: stretch;
+        align-items: start;
         padding: 20px 0 40px;
     }
     .hero h1 {
@@ -20,16 +20,23 @@
     .hero-meta { margin-top: 12px; font-weight: 700; font-size: .88rem; color: var(--accent); }
     .hero p.lead { margin: 16px 0 22px; font-size: 1rem; color: var(--ink-soft); max-width: 46ch; }
     .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    /* Real uploaded image: the box just wraps the <img>, so its height
+       follows the image's own aspect ratio instead of being stretched
+       or cropped to match the text column. */
     .hero-visual {
-        height: 100%;
-        min-height: 220px;
         border-radius: var(--radius-lg);
-        background:
-            url('{{ asset('images/logo-full.jpg') }}') center / cover no-repeat,
-            #0A0A0A;
         position: relative;
         overflow: hidden;
         box-shadow: var(--shadow-lg);
+    }
+    .hero-visual img { width: 100%; height: auto; display: block; }
+    /* Fallback (no featured review / no image uploaded): no image to size
+       from, so keep a fixed decorative box like before. */
+    .hero-visual.hero-visual-fallback {
+        min-height: 220px;
+        background:
+            url('{{ asset('images/logo-full.jpg') }}') center / cover no-repeat,
+            #0A0A0A;
     }
 
     /* ---------- Newspaper-style two-column section ---------- */
@@ -58,27 +65,31 @@
     .shows-panel .kicker { color: var(--accent); }
     .shows-panel .kicker::before { background: var(--accent); }
     .shows-panel h2 { color: #F7F4EE; text-transform: uppercase; font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: 26px; }
-    .show-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        padding: 18px 0;
-        border-bottom: 1px solid rgba(255,255,255,.12);
-        flex-wrap: wrap;
-    }
-    .show-row:last-child { border-bottom: none; }
-    .show-row .date { font-weight: 800; color: var(--accent); min-width: 90px; font-size: .9rem; }
+    /* Grid (not flex) so the date/band/venue columns line up across every
+       row regardless of how long any single row's venue or city text is. */
+    .shows-list { display: grid; grid-template-columns: auto 1fr auto; column-gap: 24px; }
+    .show-row { display: contents; }
+    .show-row > * { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+    .show-row:last-child > * { border-bottom: none; }
+    .show-row .date { font-weight: 800; color: var(--accent); font-size: .9rem; white-space: nowrap; }
     .show-row .who { font-weight: 700; font-size: 1.05rem; }
-    .show-row .where { color: #A7A296; font-size: .85rem; }
+    .show-row .where { color: #A7A296; font-size: .85rem; text-align: right; }
     .empty-note { color: var(--ink-faint); padding: 30px 0; }
 
     @media (max-width: 900px) {
         .hero { grid-template-columns: 1fr; }
-        .hero-visual { height: auto; min-height: 0; aspect-ratio: 16/9; order: -1; }
+        .hero-visual { order: -1; }
+        .hero-visual.hero-visual-fallback { height: auto; min-height: 0; aspect-ratio: 16/9; }
         .newspaper-grid { grid-template-columns: 1fr; gap: 8px; }
         .newspaper-col { padding: 0; }
         .newspaper-col:last-child { border-left: none; border-top: 1px solid var(--line); padding-top: 20px; margin-top: 12px; }
+    }
+    @media (max-width: 640px) {
+        .shows-list { grid-template-columns: 1fr; }
+        .show-row { display: block; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+        .show-row:last-child { border-bottom: none; }
+        .show-row > * { display: block; padding: 2px 0; border-bottom: none; white-space: normal; }
+        .show-row .where { text-align: left; }
     }
     @media (max-width: 600px) {
         .shows-panel { padding: 28px; }
@@ -99,8 +110,13 @@
                 <a href="{{ route('reviews.index') }}" class="btn btn-outline">Ver todas las reseñas</a>
             </div>
         </div>
-        <div class="hero-visual" role="img" aria-label="{{ $featuredReview->title }}"
-             @if($featuredReview->featured_image) style="background-image: url('{{ asset('storage/' . $featuredReview->featured_image) }}')" @endif></div>
+        @if($featuredReview->featured_image)
+            <div class="hero-visual">
+                <img src="{{ asset('storage/' . $featuredReview->featured_image) }}" alt="{{ $featuredReview->title }}">
+            </div>
+        @else
+            <div class="hero-visual hero-visual-fallback" role="img" aria-label="{{ $featuredReview->title }}"></div>
+        @endif
     @else
         <div>
             <span class="kicker">Cobertura en vivo</span>
@@ -111,7 +127,7 @@
                 <a href="{{ route('agenda.index') }}" class="btn btn-outline">Explorar agenda</a>
             </div>
         </div>
-        <div class="hero-visual" role="img" aria-label="Hot Rocks Shows"></div>
+        <div class="hero-visual hero-visual-fallback" role="img" aria-label="Hot Rocks Shows"></div>
     @endif
 </section>
 
@@ -162,14 +178,16 @@
 <section class="shows-panel reveal">
     <span class="kicker">No te los pierdas</span>
     <h2>Próximos Shows</h2>
-    @forelse($upcomingShows as $show)
-        <div class="show-row">
-            <span class="date">{{ $show->date->format('d/m/Y') }}</span>
-            <span class="who">{{ $show->bands->pluck('name')->join(', ') }}</span>
-            <span class="where">{{ $show->venue }} · {{ $show->city }}</span>
-        </div>
-    @empty
-        <p class="empty-note">Sin shows confirmados en la agenda.</p>
-    @endforelse
+    <div class="shows-list">
+        @forelse($upcomingShows as $show)
+            <div class="show-row">
+                <span class="date">{{ $show->date->format('d/m/Y') }}</span>
+                <span class="who">{{ $show->bands->pluck('name')->join(', ') }}</span>
+                <span class="where">{{ $show->venue }} · {{ $show->city }}</span>
+            </div>
+        @empty
+            <p class="empty-note">Sin shows confirmados en la agenda.</p>
+        @endforelse
+    </div>
 </section>
 @endsection
