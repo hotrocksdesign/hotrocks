@@ -13,14 +13,19 @@
     .meta-grid .value { font-weight: 700; }
     .meta-grid .value a:hover { color: var(--accent); }
 
-    .review-content { line-height: 1.9; font-size: 1.08rem; margin: 44px 0; max-width: 920px; color: #26241E; text-align: justify; }
+    /* Content + photo gallery side by side on desktop: text on the left,
+       small stacked thumbnails on the right that open the lightbox. */
+    .review-layout { display: grid; grid-template-columns: 1fr 200px; align-items: start; gap: 40px; margin: 44px 0; }
+    .review-content { line-height: 1.9; font-size: 1.08rem; color: #26241E; text-align: justify; }
     .review-content p { margin-bottom: 1.2em; }
 
+    .review-gallery { display: flex; flex-direction: column; gap: 14px; }
+    .review-gallery .gallery-kicker { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); font-weight: 700; }
+    .gallery-thumb { display: block; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+    .gallery-thumb img { width: 100%; height: auto; display: block; transition: transform .3s ease; }
+    .gallery-thumb:hover img { transform: scale(1.06); }
+
     section.block { margin: 52px 0; }
-    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; gap: 18px; }
-    .gallery-item { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
-    .gallery-item .media-crop img { width: 100%; height: auto; display: block; }
-    .gallery-item .caption { padding: 12px 14px; font-size: .82rem; color: var(--ink-soft); }
 
     .video-wrap { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); }
     .instagram-embed-wrap { display: flex; justify-content: center; }
@@ -32,6 +37,12 @@
     .share-panel strong { font-size: .85rem; letter-spacing: .5px; }
     .share-panel .btn-ghost { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); color: #F7F4EE; }
     .share-panel .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 800px) {
+        .review-layout { grid-template-columns: 1fr; }
+        .review-gallery { flex-direction: row; flex-wrap: wrap; }
+        .review-gallery .gallery-thumb { width: calc(33.33% - 10px); }
+    }
 </style>
 @endsection
 
@@ -70,27 +81,22 @@
     </div>
 </article>
 
-<div class="review-content reveal">
-    {!! nl2br(e($review->content)) !!}
-</div>
+<div class="review-layout">
+    <div class="review-content reveal">
+        {!! nl2br(e($review->content)) !!}
+    </div>
 
-@if($review->photos->count() > 0)
-    <section class="block reveal">
-        <div class="section-head" style="margin-bottom:24px;"><span class="kicker">Galería</span><h2 style="font-size:1.8rem;">Fotos del show</h2></div>
-        <div class="gallery">
+    @if($review->photos->count() > 0)
+        <aside class="review-gallery reveal">
+            <span class="gallery-kicker">Fotos del show</span>
             @foreach($review->photos as $photo)
-                <div class="gallery-item">
-                    <a href="{{ asset('storage/' . $photo->photo_url) }}" class="media-crop" data-lightbox="{{ asset('storage/' . $photo->photo_url) }}" data-lightbox-alt="{{ $photo->caption }}">
-                        <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="{{ $photo->caption }}">
-                    </a>
-                    @if($photo->caption)
-                        <p class="caption">{{ $photo->caption }}</p>
-                    @endif
-                </div>
+                <a href="{{ asset('storage/' . $photo->photo_url) }}" class="gallery-thumb" data-lightbox="{{ asset('storage/' . $photo->photo_url) }}" data-lightbox-alt="{{ $photo->caption }}">
+                    <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="{{ $photo->caption }}">
+                </a>
             @endforeach
-        </div>
-    </section>
-@endif
+        </aside>
+    @endif
+</div>
 
 @if($review->setlist_image)
     <section class="block setlist-block reveal">
