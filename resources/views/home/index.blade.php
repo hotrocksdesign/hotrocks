@@ -9,7 +9,7 @@
        everything else on the page. */
     .hero {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 320px;
+        grid-template-columns: minmax(0, 1fr) 420px;
         grid-template-areas: "intro visual" "details visual";
         gap: 12px 40px;
         align-items: start;
@@ -43,10 +43,18 @@
         overflow: hidden;
         box-shadow: var(--shadow-lg);
     }
-    /* Nudge down past the "Reseña destacada" kicker line so the image
-       lines up with the title itself, not with the kicker above it. */
-    .hero-visual:not(.hero-visual-fallback) { margin-top: 32px; }
-    .hero-visual img { width: 100%; height: auto; display: block; }
+    /* Nudge down past the "Reseña destacada" kicker line so the image's
+       top lines up with the title, then stretch to fill the rest of the
+       card's height so the bottom lines up with the buttons row — width
+       follows automatically (height:100% + width:auto) so the image
+       never gets stretched/squashed out of its real proportions. */
+    .hero-visual:not(.hero-visual-fallback) {
+        margin-top: 32px;
+        align-self: stretch;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .hero-visual:not(.hero-visual-fallback) img { width: auto; height: 100%; max-width: 100%; object-fit: contain; display: block; }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
     .hero-visual.hero-visual-fallback {
@@ -88,13 +96,14 @@
     .shows-panel h2 { color: #F7F4EE; text-transform: uppercase; font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: 26px; }
     /* Grid (not flex) so the date/band/venue columns line up across every
        row regardless of how long any single row's venue or city text is. */
-    .shows-list { display: grid; grid-template-columns: auto 1fr auto; column-gap: 24px; }
+    .shows-list { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; column-gap: 24px; }
     .show-row { display: contents; }
     .show-row > * { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
     .show-row:last-child > * { border-bottom: none; }
     .show-row .date { font-weight: 800; color: var(--accent); font-size: .9rem; white-space: nowrap; }
     .show-row .who { font-weight: 700; font-size: 1.05rem; }
     .show-row .where { color: #A7A296; font-size: .85rem; text-align: right; }
+    .show-row .btn { white-space: nowrap; }
     .empty-note { color: var(--ink-faint); padding: 30px 0; }
 
     .band-cta {
@@ -118,9 +127,18 @@
             grid-template-areas: "intro" "visual" "details";
         }
         .hero-visual.hero-visual-fallback { height: auto; min-height: 0; aspect-ratio: 16/9; }
-        /* Real uploaded image (not the generic fallback banner): smaller
-           and centered on mobile, sitting right after the title. */
-        .hero-visual:not(.hero-visual-fallback) { max-width: 260px; margin: 0 auto; }
+        /* Real uploaded image (not the generic fallback banner): the
+           desktop "stretch to fill the card height" trick doesn't apply
+           here since visual is its own row now — go back to a plain
+           width-driven small image, centered, right after the title. */
+        .hero-visual:not(.hero-visual-fallback) {
+            max-width: 260px;
+            margin: 0 auto;
+            align-self: auto;
+            display: block;
+            justify-content: normal;
+        }
+        .hero-visual:not(.hero-visual-fallback) img { width: 100%; height: auto; max-width: none; object-fit: initial; }
         .newspaper-grid { grid-template-columns: 1fr; gap: 8px; }
         .newspaper-col { padding: 0; }
         .newspaper-col:last-child { border-left: none; border-top: 1px solid var(--line); padding-top: 20px; margin-top: 12px; }
@@ -255,6 +273,11 @@
                 <span class="date">{{ $show->date->format('d/m/Y') }}</span>
                 <span class="who">{{ $show->bands->pluck('name')->join(', ') }}</span>
                 <span class="where">{{ $show->venue }} · {{ $show->city }}</span>
+                @if($show->ticket_url)
+                    <a href="{{ $show->ticket_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-accent">Entradas</a>
+                @else
+                    <span></span>
+                @endif
             </div>
         @empty
             <p class="empty-note">Sin shows confirmados en la agenda.</p>
@@ -265,7 +288,7 @@
 @guest
     <section class="band-cta reveal">
         <div>
-            <span class="kicker">¿Sos una banda?</span>
+            <span class="kicker">¿Tenés una banda?</span>
             <h2>Sumá tu banda a Hot Rocks</h2>
             <p>Creá tu ficha con logo, fotos y redes. Un admin la revisa y en cuanto se aprueba aparece en la enciclopedia.</p>
         </div>
