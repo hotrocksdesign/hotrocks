@@ -10,7 +10,8 @@ class ReviewController extends Controller
 {
     public function index(Request $request): View
     {
-        $reviews = Review::where('published_at', '!=', null)
+        $reviews = Review::with('photos')
+            ->where('published_at', '!=', null)
             ->orderBy('show_date', 'desc');
 
         // Search
