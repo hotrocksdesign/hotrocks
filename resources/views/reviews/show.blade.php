@@ -82,8 +82,45 @@
 </article>
 
 <div class="review-layout">
-    <div class="review-content reveal">
-        {!! nl2br(e($review->content)) !!}
+    <div class="review-main">
+        <div class="review-content reveal">
+            {!! nl2br(e($review->content)) !!}
+        </div>
+
+        @if($review->setlist_image)
+            <section class="block setlist-block reveal">
+                <div class="section-head" style="margin-bottom:24px;"><span class="kicker">Setlist</span><h2 style="font-size:1.8rem;">Qué sonó esa noche</h2></div>
+                <a href="{{ asset('storage/' . $review->setlist_image) }}" data-lightbox="{{ asset('storage/' . $review->setlist_image) }}" data-lightbox-alt="Setlist">
+                    <img src="{{ asset('storage/' . $review->setlist_image) }}" alt="Setlist">
+                </a>
+            </section>
+        @endif
+
+        @if($review->video_url)
+            <section class="block reveal">
+                <div class="section-head" style="margin-bottom:24px;"><span class="kicker">Video</span><h2 style="font-size:1.8rem;">Mirá el show</h2></div>
+                @if(str_contains($review->video_url, 'youtube') || str_contains($review->video_url, 'youtu.be'))
+                    <div class="video-wrap" style="position: relative; padding-bottom: 56.25%; height: 0;">
+                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" src="https://www.youtube.com/embed/{{ preg_replace('/^.*(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]*).*/i', '$1', $review->video_url) }}" allowfullscreen></iframe>
+                    </div>
+                @elseif(str_contains($review->video_url, 'instagram.com'))
+                    <div class="instagram-embed-wrap">
+                        <blockquote class="instagram-media" data-instgrm-permalink="{{ $review->video_url }}" data-instgrm-version="14" style="width:100%; max-width:540px;"></blockquote>
+                    </div>
+                    <script async src="//www.instagram.com/embed.js"></script>
+                @else
+                    <a href="{{ $review->video_url }}" target="_blank" class="btn btn-outline">Ver video →</a>
+                @endif
+            </section>
+        @endif
+
+        @if($review->tags->count() > 0)
+            <div class="tags-row reveal">
+                @foreach($review->tags as $tag)
+                    <span class="tag">#{{ $tag->name }}</span>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     @if($review->photos->count() > 0)
@@ -97,41 +134,6 @@
         </aside>
     @endif
 </div>
-
-@if($review->setlist_image)
-    <section class="block setlist-block reveal">
-        <div class="section-head" style="margin-bottom:24px;"><span class="kicker">Setlist</span><h2 style="font-size:1.8rem;">Qué sonó esa noche</h2></div>
-        <a href="{{ asset('storage/' . $review->setlist_image) }}" data-lightbox="{{ asset('storage/' . $review->setlist_image) }}" data-lightbox-alt="Setlist">
-            <img src="{{ asset('storage/' . $review->setlist_image) }}" alt="Setlist">
-        </a>
-    </section>
-@endif
-
-@if($review->video_url)
-    <section class="block reveal">
-        <div class="section-head" style="margin-bottom:24px;"><span class="kicker">Video</span><h2 style="font-size:1.8rem;">Mirá el show</h2></div>
-        @if(str_contains($review->video_url, 'youtube') || str_contains($review->video_url, 'youtu.be'))
-            <div class="video-wrap" style="position: relative; padding-bottom: 56.25%; height: 0;">
-                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" src="https://www.youtube.com/embed/{{ preg_replace('/^.*(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]*).*/i', '$1', $review->video_url) }}" allowfullscreen></iframe>
-            </div>
-        @elseif(str_contains($review->video_url, 'instagram.com'))
-            <div class="instagram-embed-wrap">
-                <blockquote class="instagram-media" data-instgrm-permalink="{{ $review->video_url }}" data-instgrm-version="14" style="width:100%; max-width:540px;"></blockquote>
-            </div>
-            <script async src="//www.instagram.com/embed.js"></script>
-        @else
-            <a href="{{ $review->video_url }}" target="_blank" class="btn btn-outline">Ver video →</a>
-        @endif
-    </section>
-@endif
-
-@if($review->tags->count() > 0)
-    <div class="tags-row reveal">
-        @foreach($review->tags as $tag)
-            <span class="tag">#{{ $tag->name }}</span>
-        @endforeach
-    </div>
-@endif
 
 <div class="share-panel reveal">
     <strong>Compartir:</strong>
