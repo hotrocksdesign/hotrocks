@@ -45,16 +45,14 @@
     }
     /* Nudge down past the "Reseña destacada" kicker line so the image's
        top lines up with the title, then stretch to fill the rest of the
-       card's height so the bottom lines up with the buttons row — width
-       follows automatically (height:100% + width:auto) so the image
-       never gets stretched/squashed out of its real proportions. */
+       card's height so the bottom lines up with the buttons row. The
+       image fills its box completely (object-fit:cover) so there's no
+       visible white background around it — crops instead of letterboxing. */
     .hero-visual:not(.hero-visual-fallback) {
         margin-top: 32px;
         align-self: stretch;
-        display: flex;
-        justify-content: flex-end;
     }
-    .hero-visual:not(.hero-visual-fallback) img { width: auto; height: 100%; max-width: 100%; object-fit: contain; display: block; }
+    .hero-visual:not(.hero-visual-fallback) img { width: 100%; height: 100%; object-fit: cover; display: block; }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
     .hero-visual.hero-visual-fallback {
