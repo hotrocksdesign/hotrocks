@@ -223,13 +223,22 @@
 
         @forelse($latestNews as $item)
             <article class="editorial-item reveal">
-                <div class="editorial-meta">{{ $item->published_at->format('d/m/Y') }}</div>
-                <h3><a href="{{ route('news.show', $item) }}">{{ $item->title }}</a></h3>
-                <p>{{ Str::limit($item->content, 120) }}</p>
-                <a href="{{ route('news.show', $item) }}" class="read-more">
-                    Leer más
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </a>
+                <div class="editorial-item-inner">
+                    @if($item->featured_image)
+                        <div class="editorial-thumb">
+                            <img src="{{ asset('storage/' . $item->featured_image) }}" alt="">
+                        </div>
+                    @endif
+                    <div class="editorial-body">
+                        <div class="editorial-meta">{{ $item->published_at->format('d/m/Y') }}</div>
+                        <h3><a href="{{ route('news.show', $item) }}">{{ $item->title }}</a></h3>
+                        <p>{{ Str::limit($item->content, 120) }}</p>
+                        <a href="{{ route('news.show', $item) }}" class="read-more">
+                            Leer más
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </a>
+                    </div>
+                </div>
             </article>
         @empty
             <p class="empty-note">Sin noticias aún.</p>
