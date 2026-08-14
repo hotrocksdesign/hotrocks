@@ -6,7 +6,7 @@
 <style>
     .hero {
         display: grid;
-        grid-template-columns: 1.15fr .85fr;
+        grid-template-columns: 1fr 320px;
         grid-template-areas: "intro visual" "details visual";
         gap: 12px 40px;
         align-items: start;
@@ -33,9 +33,6 @@
         overflow: hidden;
         box-shadow: var(--shadow-lg);
     }
-    /* Cap the real image's width on desktop so it doesn't dominate the
-       hero — it was rendering huge (tall portrait flyers especially). */
-    .hero-visual:not(.hero-visual-fallback) { max-width: 320px; margin-left: auto; }
     .hero-visual img { width: 100%; height: auto; display: block; }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
@@ -131,9 +128,15 @@
             <span class="kicker">Reseña destacada</span>
             <h1>{{ $featuredReview->title }}</h1>
         </div>
-        @if($featuredReview->featured_image)
+        @php
+            // Preferimos una foto real del show (galería) antes que la
+            // imagen del campo "Imagen del show" (que muchas veces termina
+            // siendo un flyer promocional en vez de una foto del show en sí).
+            $heroImagePath = $featuredReview->photos->first()?->photo_url ?? $featuredReview->featured_image;
+        @endphp
+        @if($heroImagePath)
             <div class="hero-visual">
-                <img src="{{ asset('storage/' . $featuredReview->featured_image) }}" alt="{{ $featuredReview->title }}">
+                <img src="{{ asset('storage/' . $heroImagePath) }}" alt="{{ $featuredReview->title }}">
             </div>
         @else
             <div class="hero-visual hero-visual-fallback" role="img" aria-label="{{ $featuredReview->title }}"></div>
