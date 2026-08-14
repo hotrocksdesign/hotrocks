@@ -39,6 +39,9 @@
         overflow: hidden;
         box-shadow: var(--shadow-lg);
     }
+    /* Nudge down past the "Reseña destacada" kicker line so the image
+       lines up with the title itself, not with the kicker above it. */
+    .hero-visual:not(.hero-visual-fallback) { margin-top: 32px; }
     .hero-visual img { width: 100%; height: auto; display: block; }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
