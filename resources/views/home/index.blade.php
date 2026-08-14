@@ -4,19 +4,23 @@
 
 @section('extra-styles')
 <style>
+    /* Card wrapper: same full-bleed width as the newspaper section and
+       Próximos Shows below, instead of the hero sitting narrower than
+       everything else on the page. */
     .hero {
         display: grid;
-        grid-template-columns: minmax(0, auto) 320px;
+        grid-template-columns: minmax(0, 1fr) 320px;
         grid-template-areas: "intro visual" "details visual";
         gap: 12px 40px;
         align-items: start;
-        justify-content: start;
-        padding: 20px 0 40px;
+        padding: 40px 44px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        margin-bottom: 50px;
     }
-    /* Text column sizes to its own content (not stretched full-width),
-       so the image sits right next to the text instead of floating far
-       away with a dead gap in between. Capped so it doesn't run wild
-       on very wide screens. */
+    /* Cap line length for readability even though the column itself now
+       stretches to fill the card. */
     .hero-intro, .hero-details { max-width: 560px; }
     .hero-intro { grid-area: intro; }
     .hero-details { grid-area: details; }
@@ -60,6 +64,10 @@
     .editorial-item { padding: 22px 0; border-bottom: 1px solid var(--line); }
     .editorial-item:first-child { padding-top: 0; }
     .editorial-item:last-child { border-bottom: none; }
+    .editorial-item-inner { display: flex; gap: 16px; }
+    .editorial-thumb { flex-shrink: 0; width: 84px; height: 84px; border-radius: var(--radius-sm); overflow: hidden; background: var(--bg); }
+    .editorial-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .editorial-body { min-width: 0; }
     .editorial-item .editorial-meta { font-size: .78rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
     .editorial-item h3 { font-size: 1.2rem; text-transform: none; letter-spacing: 0; margin-bottom: 8px; font-family: 'Inter', sans-serif; font-weight: 800; line-height: 1.25; }
     .editorial-item p { color: var(--ink-soft); font-size: .88rem; margin-bottom: 10px; }
@@ -125,6 +133,7 @@
         .show-row .where { text-align: left; }
     }
     @media (max-width: 600px) {
+        .hero { padding: 28px; }
         .shows-panel { padding: 28px; }
     }
 </style>
@@ -182,14 +191,24 @@
         </div>
 
         @forelse($latestReviews as $review)
+            @php $thumbPath = $review->photos->first()?->photo_url ?? $review->featured_image; @endphp
             <article class="editorial-item reveal">
-                <div class="editorial-meta">{{ $review->band?->name ?? 'Lineup variado' }} · {{ $review->show_date->format('d/m/Y') }}</div>
-                <h3><a href="{{ route('reviews.show', $review) }}">{{ $review->title }}</a></h3>
-                <p>{{ Str::limit($review->content, 130) }}</p>
-                <a href="{{ route('reviews.show', $review) }}" class="read-more">
-                    Leer reseña
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </a>
+                <div class="editorial-item-inner">
+                    @if($thumbPath)
+                        <div class="editorial-thumb">
+                            <img src="{{ asset('storage/' . $thumbPath) }}" alt="">
+                        </div>
+                    @endif
+                    <div class="editorial-body">
+                        <div class="editorial-meta">{{ $review->band?->name ?? 'Lineup variado' }} · {{ $review->show_date->format('d/m/Y') }}</div>
+                        <h3><a href="{{ route('reviews.show', $review) }}">{{ $review->title }}</a></h3>
+                        <p>{{ Str::limit($review->content, 130) }}</p>
+                        <a href="{{ route('reviews.show', $review) }}" class="read-more">
+                            Leer reseña
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </a>
+                    </div>
+                </div>
             </article>
         @empty
             <p class="empty-note">Sin reseñas aún. ¡Pronto habrá contenido!</p>
