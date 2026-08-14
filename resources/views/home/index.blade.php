@@ -6,12 +6,18 @@
 <style>
     .hero {
         display: grid;
-        grid-template-columns: 1fr 320px;
+        grid-template-columns: minmax(0, auto) 320px;
         grid-template-areas: "intro visual" "details visual";
         gap: 12px 40px;
         align-items: start;
+        justify-content: start;
         padding: 20px 0 40px;
     }
+    /* Text column sizes to its own content (not stretched full-width),
+       so the image sits right next to the text instead of floating far
+       away with a dead gap in between. Capped so it doesn't run wild
+       on very wide screens. */
+    .hero-intro, .hero-details { max-width: 560px; }
     .hero-intro { grid-area: intro; }
     .hero-details { grid-area: details; }
     .hero h1 {
