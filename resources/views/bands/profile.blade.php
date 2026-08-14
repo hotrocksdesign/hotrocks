@@ -77,30 +77,35 @@
             </div>
 
             <div class="field">
-                <label>Galería de fotos</label>
-                @if($band && $band->photos->count())
-                    <div class="gallery-manage">
-                        @foreach($band->photos as $photo)
-                            <div class="gallery-manage-item">
-                                <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="">
-                                <form method="POST" action="{{ route('band.profile.photos.destroy', $photo) }}" onsubmit="return confirm('¿Quitar esta foto?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" aria-label="Quitar foto">&times;</button>
-                                </form>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="field-hint">Todavía no hay fotos en la galería.</p>
-                @endif
-                <label for="photos" style="font-weight:400; font-size:.85rem; color:var(--ink-soft);">Agregar fotos</label>
+                <label for="photos">Agregar fotos a la galería</label>
                 <input type="file" id="photos" name="photos[]" accept="image/*" multiple>
                 @error('photos.*') <span class="field-error">{{ $message }}</span> @enderror
             </div>
 
             <button type="submit" class="btn btn-accent btn-block">{{ $band ? 'Guardar cambios' : 'Crear perfil' }}</button>
         </form>
+
+        @if($band && $band->photos->count())
+            {{-- Fuera del form de arriba a propósito: un <form> no puede ir
+                 anidado dentro de otro <form> (HTML inválido). Antes estaba
+                 adentro y el navegador mezclaba este _method=DELETE con el
+                 submit de "Guardar cambios", rompiendo el guardado. --}}
+            <div class="field" style="margin-top: 24px;">
+                <label>Fotos actuales <span style="color:var(--ink-faint); font-weight:400;">(click en la X para quitar una)</span></label>
+                <div class="gallery-manage">
+                    @foreach($band->photos as $photo)
+                        <div class="gallery-manage-item">
+                            <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="">
+                            <form method="POST" action="{{ route('band.profile.photos.destroy', $photo) }}" onsubmit="return confirm('¿Quitar esta foto?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" aria-label="Quitar foto">&times;</button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

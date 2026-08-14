@@ -59,24 +59,7 @@
     </div>
 
     <div class="field">
-        <label>Galería de fotos</label>
-        @if($review->photos->count())
-            <div class="gallery-manage">
-                @foreach($review->photos as $photo)
-                    <div class="gallery-manage-item">
-                        <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="">
-                        <form method="POST" action="{{ route('admin.reviews.photos.destroy', [$review, $photo]) }}" onsubmit="return confirm('¿Quitar esta foto?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" aria-label="Quitar foto">&times;</button>
-                        </form>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <p class="field-hint">Todavía no hay fotos en la galería.</p>
-        @endif
-        <label for="photos" style="font-weight:400; font-size:.85rem; color:var(--ink-soft);">Agregar más fotos</label>
+        <label for="photos">Agregar más fotos a la galería</label>
         <input type="file" id="photos" name="photos[]" accept="image/*" multiple>
         @error('photos.*') <span class="field-error">{{ $message }}</span> @enderror
     </div>
@@ -91,4 +74,26 @@
         <a href="{{ route('admin.reviews.index') }}" class="btn btn-ghost">Cancelar</a>
     </div>
 </form>
+
+@if($review->photos->count())
+    {{-- Fuera del form de arriba a propósito: un <form> no puede ir anidado
+         dentro de otro <form> (HTML inválido). Antes estaba adentro y el
+         navegador mezclaba este _method=DELETE con el del form principal,
+         así que "Guardar Cambios" terminaba borrando la reseña entera. --}}
+    <div class="card" style="max-width: 760px; padding: 32px; margin-top: 24px;">
+        <label>Fotos actuales <span style="color:var(--ink-faint); font-weight:400;">(click en la X para quitar una)</span></label>
+        <div class="gallery-manage">
+            @foreach($review->photos as $photo)
+                <div class="gallery-manage-item">
+                    <img src="{{ asset('storage/' . $photo->photo_url) }}" alt="">
+                    <form method="POST" action="{{ route('admin.reviews.photos.destroy', [$review, $photo]) }}" onsubmit="return confirm('¿Quitar esta foto?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" aria-label="Quitar foto">&times;</button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
 @endsection
