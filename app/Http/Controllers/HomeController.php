@@ -29,7 +29,7 @@ class HomeController extends Controller
 
         $latestNews = News::where('published_at', '!=', null)
             ->orderBy('published_at', 'desc')
-            ->limit(3)
+            ->limit(6)
             ->get();
 
         return view('home.index', [

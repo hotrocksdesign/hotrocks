@@ -7,22 +7,22 @@
     .hero {
         display: grid;
         grid-template-columns: 1.15fr .85fr;
-        gap: 56px;
+        gap: 40px;
         align-items: stretch;
-        padding: 20px 0 64px;
+        padding: 20px 0 40px;
     }
     .hero h1 {
-        font-size: clamp(2.6rem, 6vw, 4.8rem);
+        font-size: clamp(2rem, 4.2vw, 3.2rem);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
     .hero h1 em { font-style: normal; color: var(--accent); }
-    .hero-meta { margin-top: 14px; font-weight: 700; font-size: .92rem; color: var(--accent); }
-    .hero p.lead { margin: 22px 0 30px; font-size: 1.1rem; color: var(--ink-soft); max-width: 46ch; }
+    .hero-meta { margin-top: 12px; font-weight: 700; font-size: .88rem; color: var(--accent); }
+    .hero p.lead { margin: 16px 0 22px; font-size: 1rem; color: var(--ink-soft); max-width: 46ch; }
     .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
     .hero-visual {
         height: 100%;
-        min-height: 340px;
+        min-height: 220px;
         border-radius: var(--radius-lg);
         background:
             url('{{ asset('images/logo-full.jpg') }}') center / cover no-repeat,
@@ -32,23 +32,20 @@
         box-shadow: var(--shadow-lg);
     }
 
-    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-bottom: 70px; }
-    .review-card { padding: 26px; display: flex; flex-direction: column; height: 100%; }
-    .review-card .review-meta { display: flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
-    .review-card h3 { font-size: 1.5rem; text-transform: none; letter-spacing: 0; margin-bottom: 12px; font-family: 'Inter', sans-serif; font-weight: 800; }
-    .review-card p { color: var(--ink-soft); font-size: .92rem; flex-grow: 1; }
-    .review-card .read-more { margin-top: 18px; font-weight: 700; font-size: .85rem; display: inline-flex; align-items: center; gap: 6px; color: var(--ink); }
-    .review-card .read-more svg { transition: transform .25s ease; }
-    .review-card:hover .read-more svg { transform: translateX(4px); }
-
-    .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-bottom: 70px; }
-    .news-card-mini { padding: 26px; display: flex; flex-direction: column; height: 100%; }
-    .news-card-mini .news-meta { font-size: .82rem; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
-    .news-card-mini h3 { font-size: 1.3rem; text-transform: none; letter-spacing: 0; margin-bottom: 12px; font-family: 'Inter', sans-serif; font-weight: 800; }
-    .news-card-mini p { color: var(--ink-soft); font-size: .92rem; flex-grow: 1; }
-    .news-card-mini .read-more { margin-top: 18px; font-weight: 700; font-size: .85rem; display: inline-flex; align-items: center; gap: 6px; color: var(--ink); }
-    .news-card-mini .read-more svg { transition: transform .25s ease; }
-    .news-card-mini:hover .read-more svg { transform: translateX(4px); }
+    /* ---------- Newspaper-style two-column section ---------- */
+    .newspaper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 70px; }
+    .newspaper-col { padding: 0 44px; }
+    .newspaper-col:first-child { padding-left: 0; }
+    .newspaper-col:last-child { padding-right: 0; border-left: 1px solid var(--line); }
+    .editorial-item { padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .editorial-item:first-child { padding-top: 0; }
+    .editorial-item:last-child { border-bottom: none; }
+    .editorial-item .editorial-meta { font-size: .78rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
+    .editorial-item h3 { font-size: 1.2rem; text-transform: none; letter-spacing: 0; margin-bottom: 8px; font-family: 'Inter', sans-serif; font-weight: 800; line-height: 1.25; }
+    .editorial-item p { color: var(--ink-soft); font-size: .88rem; margin-bottom: 10px; }
+    .editorial-item .read-more { font-weight: 700; font-size: .82rem; display: inline-flex; align-items: center; gap: 6px; color: var(--ink); }
+    .editorial-item .read-more svg { transition: transform .25s ease; }
+    .editorial-item:hover .read-more svg { transform: translateX(4px); }
 
     .shows-panel {
         background: var(--ink);
@@ -79,12 +76,11 @@
     @media (max-width: 900px) {
         .hero { grid-template-columns: 1fr; }
         .hero-visual { height: auto; min-height: 0; aspect-ratio: 16/9; order: -1; }
-        .reviews-grid { grid-template-columns: 1fr 1fr; }
-        .news-grid { grid-template-columns: 1fr 1fr; }
+        .newspaper-grid { grid-template-columns: 1fr; gap: 8px; }
+        .newspaper-col { padding: 0; }
+        .newspaper-col:last-child { border-left: none; border-top: 1px solid var(--line); padding-top: 20px; margin-top: 12px; }
     }
     @media (max-width: 600px) {
-        .reviews-grid { grid-template-columns: 1fr; }
-        .news-grid { grid-template-columns: 1fr; }
         .shows-panel { padding: 28px; }
     }
 </style>
@@ -119,46 +115,48 @@
     @endif
 </section>
 
-@if($latestNews->count() > 0)
-<div class="section-head reveal">
-    <span class="kicker">Al día</span>
-    <h2>Noticias</h2>
-</div>
+<div class="newspaper-grid">
+    <div class="newspaper-col">
+        <div class="section-head reveal">
+            <span class="kicker">Recién publicadas</span>
+            <h2>Últimas Reseñas</h2>
+        </div>
 
-<div class="news-grid">
-    @foreach($latestNews as $item)
-        <article class="card card-hover news-card-mini reveal">
-            <div class="news-meta">{{ $item->published_at->format('d/m/Y') }}</div>
-            <h3><a href="{{ route('news.show', $item) }}">{{ $item->title }}</a></h3>
-            <p>{{ Str::limit($item->content, 120) }}</p>
-            <a href="{{ route('news.show', $item) }}" class="read-more">
-                Leer más
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-        </article>
-    @endforeach
-</div>
-@endif
+        @forelse($latestReviews as $review)
+            <article class="editorial-item reveal">
+                <div class="editorial-meta">{{ $review->band?->name ?? 'Lineup variado' }} · {{ $review->show_date->format('d/m/Y') }}</div>
+                <h3><a href="{{ route('reviews.show', $review) }}">{{ $review->title }}</a></h3>
+                <p>{{ Str::limit($review->content, 130) }}</p>
+                <a href="{{ route('reviews.show', $review) }}" class="read-more">
+                    Leer reseña
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </article>
+        @empty
+            <p class="empty-note">Sin reseñas aún. ¡Pronto habrá contenido!</p>
+        @endforelse
+    </div>
 
-<div class="section-head reveal">
-    <span class="kicker">Recién publicadas</span>
-    <h2>Últimas Reseñas</h2>
-</div>
+    <div class="newspaper-col">
+        <div class="section-head reveal">
+            <span class="kicker">Al día</span>
+            <h2>Noticias</h2>
+        </div>
 
-<div class="reviews-grid">
-    @forelse($latestReviews as $review)
-        <article class="card card-hover review-card reveal">
-            <div class="review-meta">{{ $review->band?->name ?? 'Lineup variado' }} · {{ $review->show_date->format('d/m/Y') }}</div>
-            <h3><a href="{{ route('reviews.show', $review) }}">{{ $review->title }}</a></h3>
-            <p>{{ Str::limit($review->content, 130) }}</p>
-            <a href="{{ route('reviews.show', $review) }}" class="read-more">
-                Leer reseña
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-        </article>
-    @empty
-        <p class="empty-note">Sin reseñas aún. ¡Pronto habrá contenido!</p>
-    @endforelse
+        @forelse($latestNews as $item)
+            <article class="editorial-item reveal">
+                <div class="editorial-meta">{{ $item->published_at->format('d/m/Y') }}</div>
+                <h3><a href="{{ route('news.show', $item) }}">{{ $item->title }}</a></h3>
+                <p>{{ Str::limit($item->content, 120) }}</p>
+                <a href="{{ route('news.show', $item) }}" class="read-more">
+                    Leer más
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </article>
+        @empty
+            <p class="empty-note">Sin noticias aún.</p>
+        @endforelse
+    </div>
 </div>
 
 <section class="shows-panel reveal">
