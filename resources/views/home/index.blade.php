@@ -98,7 +98,7 @@
        row regardless of how long any single row's venue or city text is. */
     .shows-list { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; column-gap: 24px; }
     .show-row { display: contents; }
-    .show-row > * { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+    .show-row > * { padding-top: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.12); }
     .show-row:last-child > * { border-bottom: none; }
     .show-row .date { font-weight: 800; color: var(--accent); font-size: .9rem; white-space: nowrap; }
     .show-row .who { font-weight: 700; font-size: 1.05rem; }
@@ -147,7 +147,8 @@
         .shows-list { grid-template-columns: 1fr; }
         .show-row { display: block; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
         .show-row:last-child { border-bottom: none; }
-        .show-row > * { display: block; padding: 2px 0; border-bottom: none; white-space: normal; }
+        .show-row > * { display: block; padding-top: 2px; padding-bottom: 2px; border-bottom: none; white-space: normal; }
+        .show-row .btn { display: inline-flex; margin-top: 10px; }
         .show-row .where { text-align: left; }
     }
     @media (max-width: 600px) {
