@@ -25,6 +25,13 @@ class ShowAdminController extends Controller implements HasMiddleware
         ];
     }
 
+    public function index(): View
+    {
+        $shows = Show::orderBy('date', 'desc')->paginate(15);
+
+        return view('admin.shows.index', ['shows' => $shows]);
+    }
+
     public function create(): View
     {
         $bands = Band::orderBy('name', 'asc')->get();
@@ -67,6 +74,54 @@ class ShowAdminController extends Controller implements HasMiddleware
         return redirect()
             ->route('admin.shows.pending')
             ->with('success', 'Show creado y aprobado. Ya está visible en la agenda.');
+    }
+
+    public function edit(Show $show): View
+    {
+        $bands = Band::orderBy('name', 'asc')->get();
+
+        return view('admin.shows.edit', [
+            'show' => $show,
+            'bands' => $bands,
+            'defaultNames' => $show->bands->pluck('name')->all() ?: [''],
+        ]);
+    }
+
+    public function update(Request $request, Show $show)
+    {
+        $validated = $request->validate([
+            'band_names' => 'required|array|min:1',
+            'band_names.*' => 'nullable|string|max:255',
+            'date' => 'required|date',
+            'venue' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'ticket_url' => 'nullable|url',
+            'flyer' => 'nullable|image|max:4096',
+        ]);
+
+        $bandIds = Band::resolveOrCreateMany($validated['band_names'], approved: true);
+
+        if (empty($bandIds)) {
+            return back()->withInput()->withErrors(['band_names' => 'Cargá al menos una banda.']);
+        }
+
+        unset($validated['band_names']);
+
+        if ($request->hasFile('flyer')) {
+            if ($show->flyer_url) {
+                Storage::disk('public')->delete($show->flyer_url);
+            }
+            $validated['flyer_url'] = $request->file('flyer')->store('shows', 'public');
+        }
+        unset($validated['flyer']);
+
+        $show->update($validated);
+        $show->bands()->sync($bandIds);
+
+        return redirect()
+            ->route('admin.shows.index')
+            ->with('success', 'Show actualizado');
     }
 
     public function pending(): View

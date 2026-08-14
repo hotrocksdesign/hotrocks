@@ -56,8 +56,11 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::delete('/bands/{band}/photos/{photo}', [BandAdminController::class, 'destroyPhoto'])->name('admin.bands.photos.destroy');
 
     // Shows (create directly, auto-approved)
+    Route::get('/shows', [ShowAdminController::class, 'index'])->name('admin.shows.index');
     Route::get('/shows/create', [ShowAdminController::class, 'create'])->name('admin.shows.create');
     Route::post('/shows', [ShowAdminController::class, 'store'])->name('admin.shows.store');
+    Route::get('/shows/{show}/edit', [ShowAdminController::class, 'edit'])->name('admin.shows.edit');
+    Route::put('/shows/{show}', [ShowAdminController::class, 'update'])->name('admin.shows.update');
 
     // Shows approval
     Route::get('/shows/pending', [ShowAdminController::class, 'pending'])->name('admin.shows.pending');

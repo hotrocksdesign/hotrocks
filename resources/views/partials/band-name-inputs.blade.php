@@ -1,8 +1,9 @@
-{{-- Expects $bands (for the datalist suggestions). Field name: band_names[] --}}
+{{-- Expects $bands (for the datalist suggestions). Field name: band_names[].
+     Optionally pass $defaultNames to prefill rows (e.g. when editing). --}}
 <div class="field">
     <label>Banda(s) *</label>
     <div id="bandNameRows">
-        @php $oldNames = old('band_names', ['']); @endphp
+        @php $oldNames = old('band_names', $defaultNames ?? ['']); @endphp
         @foreach($oldNames as $i => $name)
             <div class="band-name-row">
                 <input type="text" name="band_names[]" list="existing-bands-list" value="{{ $name }}" placeholder="Escribí el nombre de la banda..." {{ $i === 0 ? 'required' : '' }}>
