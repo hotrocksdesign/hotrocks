@@ -33,6 +33,9 @@
         overflow: hidden;
         box-shadow: var(--shadow-lg);
     }
+    /* Cap the real image's width on desktop so it doesn't dominate the
+       hero — it was rendering huge (tall portrait flyers especially). */
+    .hero-visual:not(.hero-visual-fallback) { max-width: 320px; margin-left: auto; }
     .hero-visual img { width: 100%; height: auto; display: block; }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
@@ -79,6 +82,21 @@
     .show-row .who { font-weight: 700; font-size: 1.05rem; }
     .show-row .where { color: #A7A296; font-size: .85rem; text-align: right; }
     .empty-note { color: var(--ink-faint); padding: 30px 0; }
+
+    .band-cta {
+        margin-top: 40px;
+        padding: 40px 44px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+    .band-cta h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); text-transform: uppercase; margin-bottom: 8px; }
+    .band-cta p { color: var(--ink-soft); max-width: 46ch; }
 
     @media (max-width: 900px) {
         .hero {
@@ -203,4 +221,15 @@
         @endforelse
     </div>
 </section>
+
+@guest
+    <section class="band-cta reveal">
+        <div>
+            <span class="kicker">¿Sos una banda?</span>
+            <h2>Sumá tu banda a Hot Rocks</h2>
+            <p>Creá tu ficha con logo, fotos y redes. Un admin la revisa y en cuanto se aprueba aparece en la enciclopedia.</p>
+        </div>
+        <a href="{{ route('register') }}" class="btn btn-accent">Sumar mi banda →</a>
+    </section>
+@endguest
 @endsection

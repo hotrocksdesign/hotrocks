@@ -11,7 +11,7 @@ class ReviewController extends Controller
     public function index(Request $request): View
     {
         $reviews = Review::where('published_at', '!=', null)
-            ->orderBy('published_at', 'desc');
+            ->orderBy('show_date', 'desc');
 
         // Search
         if ($request->has('search')) {

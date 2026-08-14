@@ -17,7 +17,7 @@ class HomeController extends Controller
 
         $latestReviews = Review::where('published_at', '!=', null)
             ->when($featuredReview, fn ($query) => $query->where('id', '!=', $featuredReview->id))
-            ->orderBy('published_at', 'desc')
+            ->orderBy('show_date', 'desc')
             ->limit(6)
             ->get();
 

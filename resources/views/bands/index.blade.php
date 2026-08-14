@@ -4,6 +4,17 @@
 
 @section('extra-styles')
 <style>
+    .search-bar {
+        margin-bottom: 40px;
+        padding: 22px 26px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        display: flex;
+        gap: 14px;
+    }
+    .search-bar input { flex-grow: 1; }
+    @media (max-width: 560px) { .search-bar { flex-direction: column; } }
     .bands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 26px; margin-bottom: 40px; }
     .band-card { padding: 22px; }
     .band-photo { height: 190px; border-radius: var(--radius-sm); background-size: cover; background-position: center; margin-bottom: 18px; background-color: var(--bg); border: 1px solid var(--line); }
@@ -23,6 +34,11 @@
     <span class="kicker">Directorio</span>
     <h2>Bandas</h2>
 </div>
+
+<form action="{{ route('bands.index') }}" method="GET" class="card search-bar reveal">
+    <input type="text" name="search" placeholder="Buscar banda por nombre..." value="{{ request('search') }}">
+    <button type="submit" class="btn btn-accent">Buscar</button>
+</form>
 
 <div class="bands-grid">
     @forelse($bands as $band)
@@ -48,7 +64,9 @@
             </a>
         </div>
     @empty
-        <p style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--ink-faint);">Sin bandas registradas aún.</p>
+        <p style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--ink-faint);">
+            {{ request('search') ? 'No hay bandas que coincidan con "' . request('search') . '".' : 'Sin bandas registradas aún.' }}
+        </p>
     @endforelse
 </div>
 

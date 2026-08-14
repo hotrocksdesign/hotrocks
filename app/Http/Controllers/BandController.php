@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Band;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BandController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $bands = Band::where('is_approved', true)
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->get('search') . '%');
+            })
             ->orderBy('name', 'asc')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
         return view('bands.index', ['bands' => $bands]);
     }

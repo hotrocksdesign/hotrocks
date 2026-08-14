@@ -391,6 +391,7 @@
                         <button type="submit" class="btn btn-outline btn-sm">Salir</button>
                     </form>
                 @else
+                    <a href="{{ route('register') }}" class="{{ request()->routeIs('register') ? 'is-active' : '' }}">Sumá tu Banda</a>
                     <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'is-active' : '' }}">Ingresar</a>
                 @endauth
                 <a href="{{ env('SHOP_URL', '#') }}" class="btn btn-accent" target="_blank" rel="noopener">Shop →</a>
