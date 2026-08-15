@@ -91,6 +91,9 @@
     .editorial-item-inner { display: flex; gap: 16px; }
     .editorial-thumb { flex-shrink: 0; width: 84px; height: 84px; border-radius: var(--radius-sm); overflow: hidden; background: var(--bg); }
     .editorial-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* News thumbs show the whole photo instead of cropping it to fill the
+       square — letterboxed inside the same box (reviews keep cover). */
+    .editorial-thumb.is-news img { object-fit: contain; }
     .editorial-body { min-width: 0; }
     .editorial-item .editorial-meta { font-size: .78rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
     .editorial-item h3 { font-size: 1.2rem; text-transform: none; letter-spacing: 0; margin-bottom: 8px; font-family: 'Inter', sans-serif; font-weight: 800; line-height: 1.25; }
@@ -273,9 +276,9 @@
             <article class="editorial-item reveal">
                 <div class="editorial-item-inner">
                     @if($item->featured_image)
-                        <div class="editorial-thumb">
+                        <a href="{{ asset('storage/' . $item->featured_image) }}" class="editorial-thumb is-news" data-lightbox="{{ asset('storage/' . $item->featured_image) }}" data-lightbox-alt="{{ $item->title }}">
                             <img src="{{ asset('storage/' . $item->featured_image) }}" alt="">
-                        </div>
+                        </a>
                     @endif
                     <div class="editorial-body">
                         <div class="editorial-meta">{{ $item->published_at->format('d/m/Y') }}</div>
