@@ -76,4 +76,28 @@ class Band extends Model
 
         return array_unique($ids);
     }
+
+    /**
+     * Find a band by name (case-insensitive) or create it with the given
+     * profile details (logo, social links, etc). Existing bands are left
+     * untouched — $details only ever applies to a brand-new band, so a
+     * random submitter can't overwrite an established band's profile just
+     * by typing its name on a show submission.
+     */
+    public static function findOrCreateWithDetails(string $name, array $details, bool $approved = false): self
+    {
+        $name = trim($name);
+
+        $band = static::whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+
+        if ($band) {
+            return $band;
+        }
+
+        return static::create(array_merge($details, [
+            'name' => $name,
+            'slug' => str($name)->slug(),
+            'is_approved' => $approved,
+        ]));
+    }
 }

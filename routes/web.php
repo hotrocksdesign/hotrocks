@@ -31,11 +31,12 @@ Route::get('/bands/{band}', [BandController::class, 'show'])->name('bands.show')
 Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
 Route::post('/agenda/search', [AgendaController::class, 'search'])->name('agenda.search');
 
-// Bands submit their own shows (goes to pending queue)
-Route::middleware('auth')->group(function () {
-    Route::get('/shows/submit', [ShowSubmissionController::class, 'create'])->name('shows.submit');
-    Route::post('/shows/submit', [ShowSubmissionController::class, 'store'])->name('shows.submit.store');
+// Bands submit their own shows without needing an account — goes to a
+// pending queue for admin approval either way, account or not.
+Route::get('/shows/submit', [ShowSubmissionController::class, 'create'])->name('shows.submit');
+Route::post('/shows/submit', [ShowSubmissionController::class, 'store'])->name('shows.submit.store');
 
+Route::middleware('auth')->group(function () {
     // Band self-service profile (create/edit own band, goes to pending queue)
     Route::get('/mi-banda', [BandProfileController::class, 'edit'])->name('band.profile.edit');
     Route::post('/mi-banda', [BandProfileController::class, 'update'])->name('band.profile.update');
