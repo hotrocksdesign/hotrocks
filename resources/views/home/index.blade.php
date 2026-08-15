@@ -148,7 +148,11 @@
            here since visual is its own row now — go back to a plain
            width-driven small image, centered, right after the title. */
         .hero-visual:not(.hero-visual-fallback) {
-            position: static;
+            /* relative, not static: stays in normal flow same as static
+               would, but keeps this box as the positioning root for
+               .hero-photo-credit — otherwise that label escapes up to
+               .hero and lands wherever, instead of pinned to the photo. */
+            position: relative;
             max-width: 260px;
             margin: 0 auto;
         }
