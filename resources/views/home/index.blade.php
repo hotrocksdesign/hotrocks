@@ -151,8 +151,16 @@
             /* relative, not static: stays in normal flow same as static
                would, but keeps this box as the positioning root for
                .hero-photo-credit — otherwise that label escapes up to
-               .hero and lands wherever, instead of pinned to the photo. */
+               .hero and lands wherever, instead of pinned to the photo.
+               top/right/bottom/left must be reset too: the desktop rule's
+               top:32px/bottom:0 offsets are ignored under position:static,
+               but position:relative honors them, which shifted the whole
+               photo (and its credit label) 32px down over the text below. */
             position: relative;
+            top: auto;
+            right: auto;
+            bottom: auto;
+            left: auto;
             max-width: 260px;
             margin: 0 auto;
         }
