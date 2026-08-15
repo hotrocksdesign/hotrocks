@@ -55,6 +55,13 @@
     </div>
 
     <div class="field">
+        <label for="photo_credit">Crédito de la foto <span style="color:var(--ink-faint); font-weight:400;">(opcional)</span></label>
+        <input type="text" id="photo_credit" name="photo_credit" value="{{ old('photo_credit') }}" placeholder="Foto: Juan Pérez">
+        <p class="field-hint">Se muestra chiquito debajo de la imagen principal cuando la reseña es la destacada del home.</p>
+        @error('photo_credit') <span class="field-error">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="field">
         <label for="photos">Galería de fotos <span style="color:var(--ink-faint); font-weight:400;">(opcional)</span></label>
         <input type="file" id="photos" name="photos[]" accept="image/*" multiple>
         <p class="field-hint">Podés seleccionar varias fotos a la vez (Cmd/Ctrl + click). Se muestran como galería en la reseña.</p>

@@ -59,6 +59,18 @@
         left: 0;
     }
     .hero-visual:not(.hero-visual-fallback) img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .hero-photo-credit {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        padding: 3px 8px;
+        background: rgba(0,0,0,.55);
+        color: #F7F4EE;
+        font-size: .68rem;
+        font-weight: 600;
+        letter-spacing: .2px;
+        border-radius: 4px;
+    }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
     .hero-visual.hero-visual-fallback {
@@ -176,6 +188,9 @@
         @if($heroImagePath)
             <div class="hero-visual">
                 <img src="{{ asset('storage/' . $heroImagePath) }}" alt="{{ $featuredReview->title }}">
+                @if($featuredReview->photo_credit)
+                    <span class="hero-photo-credit">{{ $featuredReview->photo_credit }}</span>
+                @endif
             </div>
         @else
             <div class="hero-visual hero-visual-fallback" role="img" aria-label="{{ $featuredReview->title }}"></div>

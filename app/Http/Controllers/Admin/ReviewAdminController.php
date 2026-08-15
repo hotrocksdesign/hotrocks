@@ -57,6 +57,7 @@ class ReviewAdminController extends Controller implements HasMiddleware
             'video_url' => 'nullable|url',
             'tags' => 'nullable|array',
             'featured_image' => 'nullable|image|max:4096',
+            'photo_credit' => 'nullable|string|max:255',
             'photos.*' => 'nullable|image|max:4096',
             'is_featured' => 'nullable|boolean',
         ]);
@@ -110,6 +111,7 @@ class ReviewAdminController extends Controller implements HasMiddleware
             'video_url' => 'nullable|url',
             'tags' => 'nullable|array',
             'featured_image' => 'nullable|image|max:4096',
+            'photo_credit' => 'nullable|string|max:255',
             'photos.*' => 'nullable|image|max:4096',
             'is_featured' => 'nullable|boolean',
         ]);

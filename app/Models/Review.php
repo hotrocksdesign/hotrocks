@@ -17,6 +17,7 @@ class Review extends Model
         'venue',
         'show_date',
         'featured_image',
+        'photo_credit',
         'setlist_image',
         'video_url',
         'user_id',
