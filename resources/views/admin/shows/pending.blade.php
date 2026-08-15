@@ -28,7 +28,7 @@
                     </td>
                     <td>{{ $show->date->format('d/m/Y H:i') }}</td>
                     <td>{{ $show->venue }} ({{ $show->city }})</td>
-                    <td>{{ $show->user->name }}</td>
+                    <td>{{ $show->user->name ?? 'Sin cuenta (invitado)' }}</td>
                     <td>
                         <div class="action-buttons">
                             <form method="POST" action="{{ route('admin.shows.approve', $show) }}">
