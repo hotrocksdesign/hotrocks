@@ -8,7 +8,7 @@
     .news-card { padding: 28px; }
     .news-card-inner { display: flex; gap: 18px; }
     .news-thumb { flex-shrink: 0; width: 92px; height: 92px; border-radius: var(--radius-sm); overflow: hidden; background: var(--bg); }
-    .news-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .news-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .news-body { min-width: 0; }
     .news-card .news-meta {
         font-size: .82rem;
@@ -38,9 +38,9 @@
         <article class="card card-hover news-card reveal">
             <div class="news-card-inner">
                 @if($item->featured_image)
-                    <a href="{{ asset('storage/' . $item->featured_image) }}" class="news-thumb" data-lightbox="{{ asset('storage/' . $item->featured_image) }}" data-lightbox-alt="{{ $item->title }}">
+                    <div class="news-thumb">
                         <img src="{{ asset('storage/' . $item->featured_image) }}" alt="">
-                    </a>
+                    </div>
                 @endif
                 <div class="news-body">
                     <div class="news-meta">{{ $item->published_at->format('d/m/Y') }}</div>
