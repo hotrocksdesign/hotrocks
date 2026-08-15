@@ -433,7 +433,7 @@
             </div>
             <div class="footer-bottom">
                 <span>&copy; {{ date('Y') }} Hot Rocks Shows</span>
-                <span>Logo y marca sujetos a revisión antes de lanzamiento público</span>
+                <span>De fanáticos para fanáticos.</span>
             </div>
         </div>
     </footer>
