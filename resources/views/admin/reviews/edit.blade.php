@@ -73,7 +73,7 @@
 
     <div class="field-checkbox">
         <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ $review->is_featured ? 'checked' : '' }}>
-        <label for="is_featured">Marcar como reseña principal (aparece en el home)</label>
+        <label for="is_featured">Marcar como destacada (aparece en el carrusel del home, máx. {{ \App\Models\Review::MAX_FEATURED }} — la más antigua se destilda sola)</label>
     </div>
 
     <div style="display:flex; gap:12px;">

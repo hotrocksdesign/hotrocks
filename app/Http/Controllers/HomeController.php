@@ -11,14 +11,16 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $featuredReview = Review::with('photos')
+        $featuredReviews = Review::with('photos')
             ->where('published_at', '!=', null)
             ->where('is_featured', true)
-            ->first();
+            ->orderBy('show_date', 'desc')
+            ->limit(Review::MAX_FEATURED)
+            ->get();
 
         $latestReviews = Review::with('photos')
             ->where('published_at', '!=', null)
-            ->when($featuredReview, fn ($query) => $query->where('id', '!=', $featuredReview->id))
+            ->whereNotIn('id', $featuredReviews->pluck('id'))
             ->orderBy('show_date', 'desc')
             ->limit(6)
             ->get();
@@ -35,7 +37,7 @@ class HomeController extends Controller
             ->get();
 
         return view('home.index', [
-            'featuredReview' => $featuredReview,
+            'featuredReviews' => $featuredReviews,
             'latestReviews' => $latestReviews,
             'upcomingShows' => $upcomingShows,
             'latestNews' => $latestNews,

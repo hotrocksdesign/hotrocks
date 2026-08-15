@@ -71,11 +71,13 @@ class ReviewAdminController extends Controller implements HasMiddleware
         }
         unset($validated['photos']);
 
-        if ($validated['is_featured']) {
-            Review::where('is_featured', true)->update(['is_featured' => false]);
-        }
+        $validated['featured_at'] = $validated['is_featured'] ? now() : null;
 
         $review = Review::create($validated);
+
+        if ($validated['is_featured']) {
+            Review::enforceFeaturedCap();
+        }
 
         if ($request->has('tags')) {
             $review->tags()->attach($request->get('tags'));
@@ -126,11 +128,17 @@ class ReviewAdminController extends Controller implements HasMiddleware
         }
         unset($validated['photos']);
 
-        if ($validated['is_featured']) {
-            Review::where('is_featured', true)->where('id', '!=', $review->id)->update(['is_featured' => false]);
+        if ($validated['is_featured'] && ! $review->is_featured) {
+            $validated['featured_at'] = now();
+        } elseif (! $validated['is_featured']) {
+            $validated['featured_at'] = null;
         }
 
         $review->update($validated);
+
+        if ($validated['is_featured']) {
+            Review::enforceFeaturedCap();
+        }
 
         if ($request->has('tags')) {
             $review->tags()->sync($request->get('tags'));

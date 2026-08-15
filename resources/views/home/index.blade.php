@@ -71,6 +71,33 @@
         letter-spacing: .2px;
         border-radius: 4px;
     }
+    /* Carousel controls: arrows overlaid on the photo, dots in the text
+       column so they never sit on top of the image. */
+    .hero-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(0,0,0,.5);
+        border: none;
+        color: #F7F4EE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        line-height: 1;
+        cursor: pointer;
+        z-index: 2;
+        transition: background .2s ease;
+    }
+    .hero-arrow:hover { background: rgba(0,0,0,.75); }
+    .hero-arrow-prev { left: 10px; }
+    .hero-arrow-next { right: 10px; }
+    .hero-dots { display: flex; gap: 8px; margin-top: 18px; }
+    .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); border: none; padding: 0; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+    .hero-dot.is-active { background: var(--accent); transform: scale(1.3); }
     /* Fallback (no featured review / no image uploaded): no image to size
        from, so keep a fixed decorative box like before. */
     .hero-visual.hero-visual-fallback {
@@ -185,35 +212,50 @@
 @endsection
 
 @section('content')
-<section class="hero reveal">
-    @if($featuredReview)
+@php
+    // Preferimos una foto real del show (galería) antes que la imagen del
+    // campo "Imagen del show" (que muchas veces termina siendo un flyer
+    // promocional en vez de una foto del show en sí).
+    $heroSlides = $featuredReviews->map(function ($review) {
+        $imagePath = $review->photos->first()?->photo_url ?? $review->featured_image;
+
+        return [
+            'title' => $review->title,
+            'url' => route('reviews.show', $review),
+            'image' => $imagePath ? asset('storage/' . $imagePath) : null,
+            'credit' => $review->photo_credit,
+            'meta' => ($review->band?->name ?? 'Lineup variado') . ' · ' . $review->show_date->format('d/m/Y') . ' · ' . $review->venue,
+            'lead' => Str::limit($review->content, 180),
+        ];
+    })->values();
+    $firstSlide = $heroSlides->first();
+@endphp
+<section class="hero reveal" id="heroCarousel">
+    @if($firstSlide)
         <div class="hero-intro">
             <span class="kicker">Reseña destacada</span>
-            <h1>{{ $featuredReview->title }}</h1>
+            <h1 id="heroTitle">{{ $firstSlide['title'] }}</h1>
         </div>
-        @php
-            // Preferimos una foto real del show (galería) antes que la
-            // imagen del campo "Imagen del show" (que muchas veces termina
-            // siendo un flyer promocional en vez de una foto del show en sí).
-            $heroImagePath = $featuredReview->photos->first()?->photo_url ?? $featuredReview->featured_image;
-        @endphp
-        @if($heroImagePath)
-            <div class="hero-visual">
-                <img src="{{ asset('storage/' . $heroImagePath) }}" alt="{{ $featuredReview->title }}">
-                @if($featuredReview->photo_credit)
-                    <span class="hero-photo-credit">{{ $featuredReview->photo_credit }}</span>
-                @endif
-            </div>
-        @else
-            <div class="hero-visual hero-visual-fallback" role="img" aria-label="{{ $featuredReview->title }}"></div>
-        @endif
+
+        <div class="hero-visual {{ $firstSlide['image'] ? '' : 'hero-visual-fallback' }}" id="heroVisual" role="img" aria-label="{{ $firstSlide['title'] }}">
+            <img src="{{ $firstSlide['image'] }}" alt="{{ $firstSlide['title'] }}" id="heroImg" style="{{ $firstSlide['image'] ? '' : 'display:none;' }}">
+            <span class="hero-photo-credit" id="heroCredit" style="{{ $firstSlide['credit'] ? '' : 'display:none;' }}">{{ $firstSlide['credit'] }}</span>
+            @if($heroSlides->count() > 1)
+                <button type="button" class="hero-arrow hero-arrow-prev" id="heroPrev" aria-label="Reseña anterior">‹</button>
+                <button type="button" class="hero-arrow hero-arrow-next" id="heroNext" aria-label="Reseña siguiente">›</button>
+            @endif
+        </div>
+
         <div class="hero-details">
-            <p class="hero-meta">{{ $featuredReview->band?->name ?? 'Lineup variado' }} · {{ $featuredReview->show_date->format('d/m/Y') }} · {{ $featuredReview->venue }}</p>
-            <p class="lead">{{ Str::limit($featuredReview->content, 180) }}</p>
+            <p class="hero-meta" id="heroMeta">{{ $firstSlide['meta'] }}</p>
+            <p class="lead" id="heroLead">{{ $firstSlide['lead'] }}</p>
             <div class="hero-actions">
-                <a href="{{ route('reviews.show', $featuredReview) }}" class="btn btn-accent">Leer reseña completa</a>
+                <a href="{{ $firstSlide['url'] }}" class="btn btn-accent" id="heroCta">Leer reseña completa</a>
                 <a href="{{ route('reviews.index') }}" class="btn btn-outline">Ver todas las reseñas</a>
             </div>
+            @if($heroSlides->count() > 1)
+                <div class="hero-dots" id="heroDots"></div>
+            @endif
         </div>
     @else
         <div class="hero-intro">
@@ -230,6 +272,83 @@
         </div>
     @endif
 </section>
+
+@if($heroSlides->count() > 1)
+    <script>
+        (function () {
+            var slides = @json($heroSlides, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+            var index = 0;
+            var carousel = document.getElementById('heroCarousel');
+            var titleEl = document.getElementById('heroTitle');
+            var visualEl = document.getElementById('heroVisual');
+            var imgEl = document.getElementById('heroImg');
+            var creditEl = document.getElementById('heroCredit');
+            var metaEl = document.getElementById('heroMeta');
+            var leadEl = document.getElementById('heroLead');
+            var ctaEl = document.getElementById('heroCta');
+            var dotsWrap = document.getElementById('heroDots');
+            var prevBtn = document.getElementById('heroPrev');
+            var nextBtn = document.getElementById('heroNext');
+            var timer = null;
+
+            var dots = slides.map(function (_, i) {
+                var dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+                dot.setAttribute('aria-label', 'Ir a reseña destacada ' + (i + 1));
+                dot.addEventListener('click', function () { goTo(i); });
+                dotsWrap.appendChild(dot);
+                return dot;
+            });
+
+            function render() {
+                var s = slides[index];
+                titleEl.textContent = s.title;
+                metaEl.textContent = s.meta;
+                leadEl.textContent = s.lead;
+                ctaEl.href = s.url;
+                visualEl.setAttribute('aria-label', s.title);
+
+                if (s.image) {
+                    imgEl.src = s.image;
+                    imgEl.alt = s.title;
+                    imgEl.style.display = '';
+                    visualEl.classList.remove('hero-visual-fallback');
+                } else {
+                    imgEl.style.display = 'none';
+                    visualEl.classList.add('hero-visual-fallback');
+                }
+
+                if (s.credit) {
+                    creditEl.textContent = s.credit;
+                    creditEl.style.display = '';
+                } else {
+                    creditEl.style.display = 'none';
+                }
+
+                dots.forEach(function (d, i) { d.classList.toggle('is-active', i === index); });
+            }
+
+            function goTo(i) {
+                index = (i + slides.length) % slides.length;
+                render();
+                resetTimer();
+            }
+
+            function resetTimer() {
+                if (timer) clearInterval(timer);
+                timer = setInterval(function () { goTo(index + 1); }, 7000);
+            }
+
+            prevBtn.addEventListener('click', function () { goTo(index - 1); });
+            nextBtn.addEventListener('click', function () { goTo(index + 1); });
+            carousel.addEventListener('mouseenter', function () { if (timer) clearInterval(timer); });
+            carousel.addEventListener('mouseleave', resetTimer);
+
+            resetTimer();
+        })();
+    </script>
+@endif
 
 <div class="newspaper-grid">
     <div class="newspaper-col">
