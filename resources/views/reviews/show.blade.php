@@ -41,6 +41,9 @@
     @media (max-width: 800px) {
         .review-layout { grid-template-columns: 1fr; }
         .review-gallery { flex-direction: row; flex-wrap: wrap; }
+        /* Without this the kicker is just another row item, so the first
+           thumbnail sits next to "Fotos del show" instead of below it. */
+        .review-gallery .gallery-kicker { flex-basis: 100%; }
         .review-gallery .gallery-thumb { width: calc(33.33% - 10px); }
     }
 </style>
