@@ -39,7 +39,7 @@
     .view-more svg { width: 12px; height: 12px; transition: transform .25s ease; }
     .band-card:hover .view-more svg { transform: translateX(4px); }
 
-    .add-band-cta { display: flex; justify-content: center; margin-top: 24px; }
+    .section-head-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 36px; }
 
     @media (max-width: 600px) {
         .bands-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -50,9 +50,12 @@
 @endsection
 
 @section('content')
-<div class="section-head reveal">
-    <span class="kicker">Directorio</span>
-    <h2>Bandas</h2>
+<div class="section-head-row reveal">
+    <div class="section-head" style="margin-bottom: 0;">
+        <span class="kicker">Directorio</span>
+        <h2>Bandas</h2>
+    </div>
+    <a href="{{ route('bands.submit') }}" class="btn btn-accent">+ Sumá tu Banda</a>
 </div>
 
 <form action="{{ route('bands.index') }}" method="GET" class="card search-bar reveal">
@@ -102,9 +105,5 @@
 
 <div class="pagination-wrap">
     {{ $bands->links() }}
-</div>
-
-<div class="add-band-cta reveal">
-    <a href="{{ route('bands.submit') }}" class="btn btn-accent">+ Sumá tu Banda</a>
 </div>
 @endsection
