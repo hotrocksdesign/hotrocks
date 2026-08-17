@@ -95,7 +95,10 @@
         .logo-link { display: flex; align-items: center; gap: 10px; }
         .logo-img {
             height: 36px;
-            width: auto;
+            width: 320px;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
             transition: transform .35s cubic-bezier(.2,.8,.2,1);
         }
         .logo-link:hover .logo-img { transform: rotate(-4deg) scale(1.06); }
