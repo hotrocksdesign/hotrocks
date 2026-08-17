@@ -416,7 +416,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div>
-                    <a href="{{ route('home') }}" class="logo-link">@include('partials.logo')</a>
+                    <a href="{{ route('home') }}" class="logo-link">@include('partials.logo', ['variant' => 'white'])</a>
                     <p class="footer-blurb">Cobertura independiente de los mejores shows en vivo: Reseñas, agenda y las bandas que están moviendo la escena.</p>
                 </div>
                 <div class="footer-col">
