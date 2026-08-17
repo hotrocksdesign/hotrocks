@@ -103,13 +103,14 @@
         }
         .logo-link:hover .logo-img { transform: rotate(-4deg) scale(1.06); }
 
-        nav.main-nav { display: flex; align-items: center; gap: 18px; }
+        nav.main-nav { display: flex; align-items: center; gap: 13px; }
         nav.main-nav a:not(.btn) {
-            font-size: .92rem;
+            font-size: .87rem;
             font-weight: 600;
             color: var(--ink-soft);
             position: relative;
             padding: 6px 0;
+            white-space: nowrap;
         }
         nav.main-nav a:not(.btn)::after {
             content: "";
@@ -383,6 +384,7 @@
                 <a href="{{ route('bands.index') }}" class="{{ request()->routeIs('bands.*') ? 'is-active' : '' }}">Bandas</a>
                 <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'is-active' : '' }}">Agenda</a>
                 <a href="{{ route('shows.submit') }}" class="{{ request()->routeIs('shows.submit') ? 'is-active' : '' }}">Cargar Show</a>
+                <a href="{{ route('bands.submit') }}" class="{{ request()->routeIs('bands.submit') ? 'is-active' : '' }}">Sumá tu Banda</a>
                 @auth
                     @if(auth()->user()->isBand())
                         <a href="{{ route('band.profile.edit') }}" class="{{ request()->routeIs('band.profile.*') ? 'is-active' : '' }}">Mi Banda</a>
@@ -395,7 +397,6 @@
                         <button type="submit" class="btn btn-outline btn-sm">Salir</button>
                     </form>
                 @else
-                    <a href="{{ route('register') }}" class="{{ request()->routeIs('register') ? 'is-active' : '' }}">Sumá tu Banda</a>
                     <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'is-active' : '' }}">Ingresar</a>
                 @endauth
                 <a href="{{ env('SHOP_URL', '#') }}" class="btn btn-accent" target="_blank" rel="noopener">Shop →</a>

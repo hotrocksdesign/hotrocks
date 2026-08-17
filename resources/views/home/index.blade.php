@@ -434,14 +434,14 @@
     </div>
 </section>
 
-@guest
+@if(!auth()->user()?->isBand())
     <section class="band-cta reveal">
         <div>
             <span class="kicker">¿Tenés una banda?</span>
             <h2>Sumá tu banda a Hot Rocks</h2>
-            <p>Creá tu ficha con logo, fotos y redes. Un admin la revisa y en cuanto se aprueba aparece en la enciclopedia.</p>
+            <p>Creá tu ficha con logo, fotos y redes. No hace falta cuenta — un admin la revisa y en cuanto se aprueba aparece en la enciclopedia.</p>
         </div>
-        <a href="{{ route('register') }}" class="btn btn-accent">Sumar mi banda →</a>
+        <a href="{{ route('bands.submit') }}" class="btn btn-accent">Sumar mi banda →</a>
     </section>
-@endguest
+@endif
 @endsection

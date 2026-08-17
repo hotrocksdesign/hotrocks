@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BandProfileController;
+use App\Http\Controllers\BandSubmissionController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ShowSubmissionController;
 
@@ -35,6 +36,11 @@ Route::post('/agenda/search', [AgendaController::class, 'search'])->name('agenda
 // pending queue for admin approval either way, account or not.
 Route::get('/shows/submit', [ShowSubmissionController::class, 'create'])->name('shows.submit');
 Route::post('/shows/submit', [ShowSubmissionController::class, 'store'])->name('shows.submit.store');
+
+// Same deal for adding a new band — no account needed, goes to the
+// pending queue for admin approval.
+Route::get('/sumar-banda', [BandSubmissionController::class, 'create'])->name('bands.submit');
+Route::post('/sumar-banda', [BandSubmissionController::class, 'store'])->name('bands.submit.store');
 
 Route::middleware('auth')->group(function () {
     // Band self-service profile (create/edit own band, goes to pending queue)
