@@ -264,7 +264,10 @@
 
         /* ---------- Pagination ---------- */
         .pagination-wrap { display: flex; justify-content: center; margin-top: 48px; }
-        .pagination-wrap nav > div { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .pagination-nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; }
+        .pagination-nav .btn { min-width: 40px; text-align: center; }
+        .pagination-disabled { opacity: .4; cursor: default; }
+        .pagination-dots { padding: 0 4px; color: var(--ink-faint); font-weight: 700; }
 
         /* ---------- Alerts ---------- */
         .alert { padding: 16px 20px; border-radius: var(--radius-sm); margin-bottom: 24px; border-left: 4px solid; font-weight: 600; font-size: .92rem; }

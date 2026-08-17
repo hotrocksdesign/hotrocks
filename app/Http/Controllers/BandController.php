@@ -14,6 +14,9 @@ class BandController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->get('search') . '%');
             })
+            ->when($request->filled('letter'), function ($query) use ($request) {
+                $query->where('name', 'like', $request->get('letter') . '%');
+            })
             ->orderBy('name', 'asc')
             ->paginate(12)
             ->withQueryString();

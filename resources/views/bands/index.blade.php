@@ -5,7 +5,7 @@
 @section('extra-styles')
 <style>
     .search-bar {
-        margin-bottom: 40px;
+        margin-bottom: 24px;
         padding: 22px 26px;
         background: var(--surface);
         border: 1px solid var(--line);
@@ -15,17 +15,35 @@
     }
     .search-bar input { flex-grow: 1; }
     @media (max-width: 560px) { .search-bar { flex-direction: column; } }
-    .bands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 26px; margin-bottom: 40px; }
-    .band-card { padding: 22px; }
-    .band-photo { height: 190px; border-radius: var(--radius-sm); background-size: cover; background-position: center; margin-bottom: 18px; background-color: var(--bg); border: 1px solid var(--line); }
-    .band-card h3 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1.25rem; letter-spacing: 0; margin-bottom: 10px; }
-    .band-bio { color: var(--ink-soft); font-size: .88rem; line-height: 1.55; margin-bottom: 16px; }
-    .band-links { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
-    .band-links a { font-size: .8rem; font-weight: 700; color: var(--ink-soft); }
+
+    .letter-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 40px; }
+    .letter-filter a {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 30px; height: 30px; padding: 0 4px;
+        border-radius: var(--radius-sm); border: 1px solid var(--line);
+        font-size: .8rem; font-weight: 700; color: var(--ink-soft);
+        background: var(--surface);
+    }
+    .letter-filter a:hover { border-color: var(--accent); color: var(--accent); }
+    .letter-filter a.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .bands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; margin-bottom: 40px; }
+    .band-card { padding: 14px; }
+    .band-photo { height: 130px; border-radius: var(--radius-sm); background-size: cover; background-position: center; margin-bottom: 12px; background-color: var(--bg); border: 1px solid var(--line); }
+    .band-card h3 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: 0; margin-bottom: 6px; }
+    .band-bio { color: var(--ink-soft); font-size: .8rem; line-height: 1.5; margin-bottom: 10px; }
+    .band-links { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+    .band-links a { font-size: .74rem; font-weight: 700; color: var(--ink-soft); }
     .band-links a:hover { color: var(--accent); }
-    .view-more { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .85rem; margin-top: 8px; }
-    .view-more svg { transition: transform .25s ease; }
+    .view-more { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .78rem; margin-top: 4px; }
+    .view-more svg { width: 12px; height: 12px; transition: transform .25s ease; }
     .band-card:hover .view-more svg { transform: translateX(4px); }
+
+    @media (max-width: 600px) {
+        .bands-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .band-card { padding: 10px; }
+        .band-photo { height: 100px; margin-bottom: 8px; }
+    }
 </style>
 @endsection
 
@@ -36,9 +54,19 @@
 </div>
 
 <form action="{{ route('bands.index') }}" method="GET" class="card search-bar reveal">
+    @if(request('letter'))
+        <input type="hidden" name="letter" value="{{ request('letter') }}">
+    @endif
     <input type="text" name="search" placeholder="Buscar banda por nombre..." value="{{ request('search') }}">
     <button type="submit" class="btn btn-accent">Buscar</button>
 </form>
+
+<div class="letter-filter reveal">
+    <a href="{{ route('bands.index', request()->except(['letter', 'page'])) }}" class="{{ !request('letter') ? 'is-active' : '' }}">Todas</a>
+    @foreach(range('A', 'Z') as $letter)
+        <a href="{{ route('bands.index', array_merge(request()->except('page'), ['letter' => $letter])) }}" class="{{ request('letter') === $letter ? 'is-active' : '' }}">{{ $letter }}</a>
+    @endforeach
+</div>
 
 <div class="bands-grid">
     @forelse($bands as $band)

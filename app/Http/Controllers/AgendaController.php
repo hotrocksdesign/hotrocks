@@ -23,7 +23,7 @@ class AgendaController extends Controller
             }
 
             if ($request->filled('city')) {
-                $query->where('city', $request->get('city'));
+                $query->where('city', 'like', '%' . $request->get('city') . '%');
             }
         };
 
