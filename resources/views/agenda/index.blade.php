@@ -8,25 +8,30 @@
     .search-filters h3 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: .5px; margin-bottom: 20px; }
     .filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px; }
 
-    /* List layout (like the home page's "Últimas Reseñas"/"Noticias"
-       columns) instead of a grid of cards — a small flyer thumb beside
-       the details, one row per show, divided by a hairline. */
+    /* List layout, one show per row, everything on a single line — same
+       grid pattern as the home page's "Próximos Shows" panel (date | bands
+       | venue/city | button). No flyer thumbnail; clicking the date opens
+       the flyer (if there is one) in the lightbox instead. */
     .shows-list { display: flex; flex-direction: column; }
-    .show-row-item { padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .show-row-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
     .show-row-item:first-child { padding-top: 0; }
     .show-row-item:last-child { border-bottom: none; }
-    .show-row-inner { display: flex; gap: 16px; align-items: flex-start; }
-    .show-thumb { flex-shrink: 0; width: 64px; display: block; }
-    .show-thumb img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); box-shadow: var(--shadow-sm); display: block; }
-    .show-row-body { flex-grow: 1; min-width: 0; }
-    .show-date { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 800; font-size: .82rem; margin-bottom: 8px; }
-    .show-date svg { width: 13px; height: 13px; }
-    .show-venue { font-size: .98rem; font-weight: 800; font-family: 'Inter', sans-serif; margin-bottom: 4px; }
+    .show-row-inner { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
+    .show-date { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 800; font-size: .8rem; white-space: nowrap; }
+    .show-date svg { width: 13px; height: 13px; flex-shrink: 0; }
+    a.show-date[data-lightbox] { cursor: zoom-in; }
+    a.show-date[data-lightbox]:hover { text-decoration: underline; }
+    .show-info { display: flex; align-items: baseline; gap: 8px; min-width: 0; overflow: hidden; }
+    .show-venue { font-size: .92rem; font-weight: 800; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .show-venue a:hover { color: var(--accent); }
-    .show-city { color: var(--ink-soft); font-size: .78rem; margin-bottom: 8px; }
-    .show-description { color: var(--ink-soft); line-height: 1.5; margin: 8px 0; font-size: .8rem; }
-    .show-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .show-city { color: var(--ink-soft); font-size: .78rem; white-space: nowrap; flex-shrink: 0; }
+    .show-buttons { display: flex; gap: 8px; flex-shrink: 0; }
     .empty-message { text-align: center; padding: 70px 20px; color: var(--ink-faint); }
+
+    @media (max-width: 640px) {
+        .show-row-inner { grid-template-columns: 1fr; row-gap: 6px; }
+        .show-info { flex-wrap: wrap; }
+    }
 
     /* Past shows: same card grid, tucked away behind a toggle so the
        page opens on what's actually coming up, not what already happened. */
