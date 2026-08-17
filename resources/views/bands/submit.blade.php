@@ -16,7 +16,7 @@
     <div class="card submit-card reveal">
         <span class="kicker">Sumá tu banda</span>
         <h1>Sumá tu Banda</h1>
-        <p class="sub">Contanos quiénes son. No hace falta crear una cuenta — la ficha queda pendiente de aprobación y, una vez revisada, aparece en la enciclopedia de bandas.</p>
+        <p class="sub">Contanos sobre ustedes: subí toda la info que puedas (género, historia, redes, logo y fotos). No hace falta crear una cuenta — apenas la chequeemos, la banda se suma a la enciclopedia.</p>
 
         <form method="POST" action="{{ route('bands.submit.store') }}" enctype="multipart/form-data">
             @csrf
