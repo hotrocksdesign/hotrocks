@@ -29,6 +29,13 @@
     .show-description { color: var(--ink-soft); line-height: 1.5; margin: 8px 0; font-size: .8rem; }
     .show-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .empty-message { text-align: center; padding: 70px 20px; color: var(--ink-faint); }
+
+    /* Past shows: same card grid, tucked away behind a toggle so the
+       page opens on what's actually coming up, not what already happened. */
+    .past-shows-toggle { text-align: center; margin: 48px 0; }
+    .past-shows-toggle .btn svg { transition: transform .25s ease; }
+    .past-shows-toggle .btn.is-open svg { transform: rotate(180deg); }
+    #pastShowsSection .section-head { margin-top: 8px; }
 </style>
 @endsection
 
@@ -48,54 +55,65 @@
     <button type="submit" class="btn btn-accent">Buscar</button>
 </form>
 
-@if($shows->count())
+@if($upcomingShows->count())
     <div class="shows-grid">
-        @foreach($shows as $show)
-            <article class="card card-hover show-card reveal">
-                <div class="show-card-inner">
-                    @if($show->flyer_url)
-                        <a href="{{ asset('storage/' . $show->flyer_url) }}" class="show-flyer" data-lightbox="{{ asset('storage/' . $show->flyer_url) }}" data-lightbox-alt="Flyer {{ $show->venue }}">
-                            <img src="{{ asset('storage/' . $show->flyer_url) }}" alt="Flyer {{ $show->venue }}">
-                        </a>
-                    @endif
-                    <div class="show-card-body">
-                        <div class="show-date">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-                            {{ $show->date->format('d \\d\\e F \\d\\e Y \\a \\l\\a\\s H:i') }}
-                        </div>
-
-                        <div class="show-venue">
-                            @foreach($show->bands as $band)
-                                <a href="{{ route('bands.show', $band) }}">{{ $band->name }}</a>{{ !$loop->last ? ', ' : '' }}
-                            @endforeach
-                        </div>
-
-                        <div class="show-city">{{ $show->venue }} · {{ $show->city }}</div>
-
-                        @if($show->description)
-                            <div class="show-description">{{ Str::limit($show->description, 90) }}</div>
-                        @endif
-
-                        <div class="show-buttons">
-                            @if($show->ticket_url)
-                                <a href="{{ $show->ticket_url }}" target="_blank" class="btn btn-accent btn-sm">Entradas</a>
-                            @endif
-                            @if($show->review)
-                                <a href="{{ route('reviews.show', $show->review) }}" class="btn btn-outline btn-sm">Ver reseña</a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </article>
+        @foreach($upcomingShows as $show)
+            @include('agenda._show-card', ['show' => $show])
         @endforeach
+    </div>
+    <div class="pagination-wrap">
+        {{ $upcomingShows->links() }}
     </div>
 @else
     <div class="empty-message">
-        <p style="font-size: 1.1rem;">Sin shows disponibles con esos criterios.</p>
+        <p style="font-size: 1.1rem;">Sin shows próximos con esos criterios.</p>
     </div>
 @endif
 
-<div class="pagination-wrap">
-    {{ $shows->links() }}
-</div>
+@if($pastShows->count())
+    <div class="past-shows-toggle reveal">
+        <button type="button" class="btn btn-outline" id="pastShowsToggle">
+            Ver shows anteriores ({{ $pastShows->total() }})
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+    </div>
+
+    <div id="pastShowsSection" style="display: none;">
+        <div class="section-head reveal">
+            <span class="kicker">Ya pasaron</span>
+            <h2>Shows Anteriores</h2>
+        </div>
+        <div class="shows-grid">
+            @foreach($pastShows as $show)
+                @include('agenda._show-card', ['show' => $show])
+            @endforeach
+        </div>
+        <div class="pagination-wrap">
+            {{ $pastShows->links() }}
+        </div>
+    </div>
+@endif
+@endsection
+
+@section('extra-scripts')
+<script>
+    (function () {
+        var toggle = document.getElementById('pastShowsToggle');
+        var section = document.getElementById('pastShowsSection');
+        if (!toggle || !section) return;
+
+        // If we're paginating within the past-shows section, open it up
+        // straight away instead of hiding the page the user asked for.
+        if (new URLSearchParams(window.location.search).has('past_page')) {
+            section.style.display = '';
+            toggle.classList.add('is-open');
+        }
+
+        toggle.addEventListener('click', function () {
+            var isOpen = section.style.display !== 'none';
+            section.style.display = isOpen ? 'none' : '';
+            toggle.classList.toggle('is-open', !isOpen);
+        });
+    })();
+</script>
 @endsection
