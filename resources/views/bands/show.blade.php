@@ -7,7 +7,8 @@
     .back-link { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 28px; font-weight: 700; font-size: .88rem; color: var(--ink-soft); }
     .back-link:hover { color: var(--accent); }
     .band-header { display: grid; grid-template-columns: 320px 1fr; gap: 48px; align-items: start; margin-bottom: 64px; }
-    .band-photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+    .band-photo { display: block; width: 100%; aspect-ratio: 1; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+    .band-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .band-photo-empty { aspect-ratio: 1; border-radius: var(--radius-lg); background: var(--surface); border: 1px dashed var(--line); display: flex; align-items: center; justify-content: center; color: var(--ink-faint); }
     .band-info h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); text-transform: uppercase; margin-bottom: 16px; }
     .band-bio { line-height: 1.8; margin: 22px 0 28px; color: var(--ink-soft); font-size: 1.02rem; max-width: 56ch; }
@@ -82,7 +83,9 @@
 
 <div class="band-header reveal">
     @if($band->photo_url)
-        <img src="{{ asset('storage/' . $band->photo_url) }}" alt="{{ $band->name }}" class="band-photo">
+        <a href="{{ asset('storage/' . $band->photo_url) }}" class="band-photo" data-lightbox="{{ asset('storage/' . $band->photo_url) }}" data-lightbox-alt="{{ $band->name }}">
+            <img src="{{ asset('storage/' . $band->photo_url) }}" alt="{{ $band->name }}">
+        </a>
     @else
         <div class="band-photo-empty">Sin foto</div>
     @endif

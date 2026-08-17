@@ -56,9 +56,9 @@
         <article class="card card-hover review-card reveal">
             <div class="review-card-inner">
                 @if($thumbPath)
-                    <div class="review-thumb">
+                    <a href="{{ asset('storage/' . $thumbPath) }}" class="review-thumb" data-lightbox="{{ asset('storage/' . $thumbPath) }}" data-lightbox-alt="{{ $review->title }}">
                         <img src="{{ asset('storage/' . $thumbPath) }}" alt="">
-                    </div>
+                    </a>
                 @endif
                 <div class="review-body">
                     <div class="review-meta">{{ $review->band?->name ?? 'Lineup variado' }} · {{ $review->show_date->format('d/m/Y') }} · {{ $review->venue }}</div>

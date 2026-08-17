@@ -38,9 +38,9 @@
         <article class="card card-hover news-card reveal">
             <div class="news-card-inner">
                 @if($item->featured_image)
-                    <div class="news-thumb">
+                    <a href="{{ asset('storage/' . $item->featured_image) }}" class="news-thumb" data-lightbox="{{ asset('storage/' . $item->featured_image) }}" data-lightbox-alt="{{ $item->title }}">
                         <img src="{{ asset('storage/' . $item->featured_image) }}" alt="">
-                    </div>
+                    </a>
                 @endif
                 <div class="news-body">
                     <div class="news-meta">{{ $item->published_at->format('d/m/Y') }}</div>

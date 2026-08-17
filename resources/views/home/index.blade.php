@@ -362,9 +362,9 @@
             <article class="editorial-item reveal">
                 <div class="editorial-item-inner">
                     @if($thumbPath)
-                        <div class="editorial-thumb">
+                        <a href="{{ asset('storage/' . $thumbPath) }}" class="editorial-thumb" data-lightbox="{{ asset('storage/' . $thumbPath) }}" data-lightbox-alt="{{ $review->title }}">
                             <img src="{{ asset('storage/' . $thumbPath) }}" alt="">
-                        </div>
+                        </a>
                     @endif
                     <div class="editorial-body">
                         <div class="editorial-meta">{{ $review->band?->name ?? 'Lineup variado' }} · {{ $review->show_date->format('d/m/Y') }}</div>
@@ -392,9 +392,9 @@
             <article class="editorial-item reveal">
                 <div class="editorial-item-inner">
                     @if($item->featured_image)
-                        <div class="editorial-thumb">
+                        <a href="{{ asset('storage/' . $item->featured_image) }}" class="editorial-thumb" data-lightbox="{{ asset('storage/' . $item->featured_image) }}" data-lightbox-alt="{{ $item->title }}">
                             <img src="{{ asset('storage/' . $item->featured_image) }}" alt="">
-                        </div>
+                        </a>
                     @endif
                     <div class="editorial-body">
                         <div class="editorial-meta">{{ $item->published_at->format('d/m/Y') }}</div>
