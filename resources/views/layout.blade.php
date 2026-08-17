@@ -94,13 +94,13 @@
         }
         .logo-link { display: flex; align-items: center; gap: 10px; }
         .logo-img {
-            height: 58px;
+            height: 36px;
             width: auto;
             transition: transform .35s cubic-bezier(.2,.8,.2,1);
         }
         .logo-link:hover .logo-img { transform: rotate(-4deg) scale(1.06); }
 
-        nav.main-nav { display: flex; align-items: center; gap: 30px; }
+        nav.main-nav { display: flex; align-items: center; gap: 18px; }
         nav.main-nav a:not(.btn) {
             font-size: .92rem;
             font-weight: 600;
@@ -331,7 +331,7 @@
         @media (max-width: 860px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
-        @media (max-width: 760px) {
+        @media (max-width: 1220px) {
             nav.main-nav {
                 position: fixed;
                 top: var(--header-h);
