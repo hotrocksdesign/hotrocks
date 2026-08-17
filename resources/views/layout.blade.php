@@ -384,7 +384,6 @@
                 <a href="{{ route('bands.index') }}" class="{{ request()->routeIs('bands.*') ? 'is-active' : '' }}">Bandas</a>
                 <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'is-active' : '' }}">Agenda</a>
                 <a href="{{ route('shows.submit') }}" class="{{ request()->routeIs('shows.submit') ? 'is-active' : '' }}">Cargar Show</a>
-                <a href="{{ route('bands.submit') }}" class="{{ request()->routeIs('bands.submit') ? 'is-active' : '' }}">Sumá tu Banda</a>
                 @auth
                     @if(auth()->user()->isBand())
                         <a href="{{ route('band.profile.edit') }}" class="{{ request()->routeIs('band.profile.*') ? 'is-active' : '' }}">Mi Banda</a>
