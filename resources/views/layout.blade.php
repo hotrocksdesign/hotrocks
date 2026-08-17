@@ -96,8 +96,6 @@
         .logo-img {
             height: 58px;
             width: auto;
-            border-radius: 10px;
-            box-shadow: var(--shadow-sm);
             transition: transform .35s cubic-bezier(.2,.8,.2,1);
         }
         .logo-link:hover .logo-img { transform: rotate(-4deg) scale(1.06); }
