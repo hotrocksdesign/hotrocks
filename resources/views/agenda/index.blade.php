@@ -8,19 +8,17 @@
     .search-filters h3 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: .5px; margin-bottom: 20px; }
     .filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px; }
 
-    .shows-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    .show-card { padding: 16px; }
-    .show-card-inner { display: flex; gap: 14px; align-items: flex-start; }
-    .show-flyer { flex-shrink: 0; width: 72px; }
-    .show-flyer img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
-    .show-card-body { flex-grow: 1; min-width: 0; }
-    @media (max-width: 760px) {
-        .shows-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 560px) {
-        .show-card-inner { flex-direction: column; }
-        .show-flyer { width: 90px; }
-    }
+    /* List layout (like the home page's "Últimas Reseñas"/"Noticias"
+       columns) instead of a grid of cards — a small flyer thumb beside
+       the details, one row per show, divided by a hairline. */
+    .shows-list { display: flex; flex-direction: column; }
+    .show-row-item { padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .show-row-item:first-child { padding-top: 0; }
+    .show-row-item:last-child { border-bottom: none; }
+    .show-row-inner { display: flex; gap: 16px; align-items: flex-start; }
+    .show-thumb { flex-shrink: 0; width: 64px; display: block; }
+    .show-thumb img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); box-shadow: var(--shadow-sm); display: block; }
+    .show-row-body { flex-grow: 1; min-width: 0; }
     .show-date { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 800; font-size: .82rem; margin-bottom: 8px; }
     .show-date svg { width: 13px; height: 13px; }
     .show-venue { font-size: .98rem; font-weight: 800; font-family: 'Inter', sans-serif; margin-bottom: 4px; }
@@ -56,7 +54,7 @@
 </form>
 
 @if($upcomingShows->count())
-    <div class="shows-grid">
+    <div class="shows-list">
         @foreach($upcomingShows as $show)
             @include('agenda._show-card', ['show' => $show])
         @endforeach
@@ -83,7 +81,7 @@
             <span class="kicker">Ya pasaron</span>
             <h2>Shows Anteriores</h2>
         </div>
-        <div class="shows-grid">
+        <div class="shows-list">
             @foreach($pastShows as $show)
                 @include('agenda._show-card', ['show' => $show])
             @endforeach
